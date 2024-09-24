@@ -6,12 +6,15 @@ import {
   IconButton,
   Button,
   Stack,
+  Avatar,
+  Grid,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { SuperAdminForm } from "./forms/superAdminForm";
 import { AdminForm } from "./forms/AdminForm";
 import { TeacherForm } from "./forms/TeacherForm";
 import { StudentForm } from "./forms/StudentForm";
+import PersonIcon from "@mui/icons-material/Person";
 
 export default function AdminDrawer({
   open,
@@ -28,6 +31,7 @@ export default function AdminDrawer({
     role: "",
     status: "Active",
     email: "",
+    gender: "",
     phoneNo: "",
     departmentId: "",
     yearId: "",
@@ -37,12 +41,21 @@ export default function AdminDrawer({
 
   const [errors, setErrors] = useState({});
 
-  // Handle form changes
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Update form data
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null,
+      });
+    }
   };
 
   // Reset form and errors
@@ -55,6 +68,7 @@ export default function AdminDrawer({
       role: "",
       status: "Active",
       email: "",
+      gender: "",
       phoneNo: "",
       departmentId: "",
       yearId: "",
@@ -64,60 +78,99 @@ export default function AdminDrawer({
     setErrors({}); // Clear errors on reset
   };
 
-  // Form validation logic based on the role
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.username) newErrors.username = "Username is required";
+    // Step 1: Validate Name
+    if (!formData.name) {
+      setErrors({ name: "Name is required" });
+      return false; // Stop validation here
+    }
 
+    // Step 2: Validate Username
+    if (!formData.username) {
+      setErrors({ username: "Username is required" });
+      return false; // Stop validation here
+    }
+
+    // Step 3: Validate Password
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      setErrors({ password: "Password is required" });
+      return false; // Stop validation here
     } else {
       const passwordPattern = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_]).{8,}$/;
       if (!passwordPattern.test(formData.password)) {
-        newErrors.password = "Password Pattern must match";
+        setErrors({
+          password:
+            "Password must have at least 1 capital letter, 1 number, and 1 special character",
+        });
+        return false; // Stop validation here
       }
     }
 
+    // Step 4: Validate Confirm Password
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Confirm password is required";
+      setErrors({ confirmPassword: "Confirm password is required" });
+      return false; // Stop validation here
     }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords must match";
+      setErrors({ confirmPassword: "Passwords must match" });
+      return false; // Stop validation here
+    }
+
+    if (!formData.email) {
+      setErrors({ email: "Email is required" });
+      return false;
+    } else {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(formData.email)) {
+        setErrors({ email: "Invalid email address" });
+        return false;
+      }
+    }
+    if (!formData.gender) {
+      setErrors({ gender: "Gender is required" });
+      return false;
     }
     switch (role) {
-      case "SuperAdmin":
-        break;
       case "Admin":
-        if (!formData.departmentId)
-          newErrors.departmentId = "Department is required";
+        if (!formData.departmentId) {
+          setErrors({ departmentId: "Department is required" });
+          return false;
+        }
         break;
       case "Teacher":
-        if (!formData.departmentId)
-          newErrors.departmentId = "Department is required";
-        if (!formData.yearId) newErrors.departmentId = "Department is required";
+        if (!formData.departmentId) {
+          setErrors({ departmentId: "Department is required" });
+          return false;
+        }
         break;
       case "Student":
-        if (!formData.email) {
-          newErrors.email = "Email is required";
-        } else {
+        if (!formData.departmentId) {
+          setErrors({ departmentId: "Department is required" });
+          return false;
+        }
+        if (!formData.yearId) {
+          setErrors({ yearId: "Year is required" });
+          return false;
+        }
+        if (formData.parentEmail) {
           const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailPattern.test(formData.email)) {
-            newErrors.email = "Email must be a valid email address";
+          if (!emailPattern.test(formData.parentEmail)) {
+            setErrors({ parentEmail: "Invalid email address" });
+            return false;
           }
         }
-        if (!formData.departmentId)
-          newErrors.departmentId = "Department is required";
-        if (!formData.yearId) newErrors.departmentId = "Year is required";
+
         break;
       default:
         break;
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // If no errors
+    setErrors({}); // Clear previous errors if all fields pass validation
+    return true;
   };
 
   const handleSubmit = () => {
@@ -178,38 +231,73 @@ export default function AdminDrawer({
       onClose={onClose}
       PaperProps={{
         sx: {
-          width: { xs: 300, sm: 400 },
+          width: "40%",
           p: 2,
           backgroundColor: "background.default",
         },
       }}
     >
+      {/* Centered header */}
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "center",
           mb: 2,
         }}
       >
-        <Typography variant="h6">Add New {role}</Typography>
-        <IconButton onClick={onClose}>
+        <Typography variant="h6" align="center">
+          Add New {role}
+        </Typography>
+        <IconButton
+          onClick={onClose}
+          sx={{ position: "absolute", right: "16px" }} // Close icon on the right
+        >
           <CloseIcon />
         </IconButton>
       </Box>
 
-      {/* Render form based on the role */}
-      <Stack spacing={2} component="form" sx={{ width: "100%" }}>
-        {renderFormByRole()}
-        <Stack direction="row" spacing={2}>
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Save
-          </Button>
-          <Button variant="outlined" onClick={handleReset}>
-            Reset
-          </Button>
-        </Stack>
-      </Stack>
+      {/* Centered logo icon */}
+      <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+        <Avatar sx={{ width: 80, height: 80 }}>
+          {" "}
+          {/* Bigger avatar */}
+          <PersonIcon fontSize="large" />
+        </Avatar>
+      </Box>
+
+      {/* Center the form */}
+      <Box
+        component="form"
+        sx={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center", // Centers the form horizontally
+        }}
+      >
+        <Box sx={{ width: "90%" }}>
+          {" "}
+          {/* Limits form width */}
+          <Grid container spacing={2}>
+            {renderFormByRole()}
+          </Grid>
+          {/* Centered Save and Reset buttons with margin */}
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubmit}
+              >
+                Save
+              </Button>
+              <Button variant="outlined" onClick={handleReset}>
+                Reset
+              </Button>
+            </Stack>
+          </Box>
+        </Box>
+      </Box>
     </Drawer>
   );
 }
