@@ -1,23 +1,15 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Stack,
-  TextField,
-  Grid,
-} from "@mui/material";
+import { Box, Button, Stack, TextField } from "@mui/material";
 import CustomizedDataGrid from "../components/CustomizedDataGrid";
 import AdminDrawer from "../components/AdminDrawer";
 import { columns, rows } from "../internals/data/gridData";
+import { TittleCard } from "../components/TittleCard";
 
 export default function AdminPage() {
   const [search, setSearch] = useState("");
   const [filterRows, setFilterRows] = useState(rows);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState("SuperAdmin");
+  // const [selectedRole, setSelectedRole] = useState("Admin");
 
   // Dummy departments and years for dropdowns
   const departments = [
@@ -56,28 +48,13 @@ export default function AdminPage() {
         p: 3,
       }}
     >
-      {/* Card Section */}
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Grid container justifyContent="space-between" alignItems="center">
-            <Grid item>
-              <Typography variant="h6">Manage Admin</Typography>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setSelectedRole("Student");
-                }}
-              >
-                Add Admin
-              </Button>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
+      <TittleCard
+        tittle={"Manage Admin"}
+        button={"Add Admin"}
+        buttonAction={() => {
+          setDrawerOpen(true);
+        }}
+      />
 
       {/* Filters Section */}
       <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
@@ -102,7 +79,7 @@ export default function AdminPage() {
       <AdminDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        role={selectedRole}
+        role={"Admin"}
         departments={departments}
         years={years}
       />

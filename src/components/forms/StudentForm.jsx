@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import { TextField, MenuItem, Grid } from "@mui/material";
 
 export function StudentForm({

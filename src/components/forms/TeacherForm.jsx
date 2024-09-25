@@ -1,6 +1,6 @@
+/* eslint-disable react/prop-types */
 import { TextField, MenuItem, Grid } from "@mui/material";
 
-// TeacherForm Component
 export function TeacherForm({ formData, handleChange, errors, departments }) {
   const genderOptions = [
     { name: "Male" },

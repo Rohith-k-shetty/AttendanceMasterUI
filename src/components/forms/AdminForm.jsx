@@ -1,5 +1,5 @@
 import { TextField, MenuItem, Grid } from "@mui/material";
-
+/* eslint-disable react/prop-types */
 export function AdminForm({ formData, handleChange, errors, departments }) {
   const genderOptions = [
     { name: "Male" },
