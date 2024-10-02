@@ -50,6 +50,8 @@ function renderStatus(status) {
   const colors = {
     Online: "success",
     Offline: "default",
+    Active: "success",
+    Inactive: "default",
   };
 
   return <Chip label={status} color={colors[status]} size="small" />;
@@ -107,21 +109,21 @@ export const columns = [
     flex: 1,
     minWidth: 120,
   },
-  {
-    field: "averageTime",
-    headerName: "Average Time",
-    headerAlign: "right",
-    align: "right",
-    flex: 1,
-    minWidth: 100,
-  },
-  {
-    field: "conversions",
-    headerName: "Daily Conversions",
-    flex: 1,
-    minWidth: 150,
-    renderCell: renderSparklineCell,
-  },
+  // {
+  //   field: "averageTime",
+  //   headerName: "Average Time",
+  //   headerAlign: "right",
+  //   align: "right",
+  //   flex: 1,
+  //   minWidth: 100,
+  // },
+  // {
+  //   field: "conversions",
+  //   headerName: "Daily Conversions",
+  //   flex: 1,
+  //   minWidth: 150,
+  //   renderCell: renderSparklineCell,
+  // },
 ];
 
 export const rows = [

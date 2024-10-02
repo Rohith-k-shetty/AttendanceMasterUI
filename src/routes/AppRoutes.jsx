@@ -5,6 +5,7 @@ import SuperAdminPage from "../pages/SuperAdminPage";
 import AdminPage from "../pages/AdminPage";
 import TeacherPage from "../pages/TeacherPage";
 import StudentPage from "../pages/StudentPage";
+import TablePage from "../pages/TablePage";
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
       {/* Uncomment if needed */}
       {/* <Route path="/attendance-book/view" element={<AttendanceBookViewPage />} />
       <Route path="/attendance-book/add" element={<AttendanceBookAddPage />} /> */}
+      <Route path="/table" element={<TablePage />} />
     </Routes>
   );
 };

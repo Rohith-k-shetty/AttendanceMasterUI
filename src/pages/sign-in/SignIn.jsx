@@ -4,7 +4,6 @@ import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import CssBaseline from "@mui/material/CssBaseline";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Divider from "@mui/material/Divider";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import Link from "@mui/material/Link";
@@ -14,14 +13,15 @@ import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import ForgotPassword from "./ForgotPassword";
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from "./CustomIcons";
 import AppTheme from "../../shared-theme/AppTheme";
 import ColorModeSelect from "../../shared-theme/ColorModeSelect";
+import logoImage from "../../assets/sdmlogo1.webp";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignSelf: "center",
+  alignItems: "center", // Center the icon and title
   width: "100%",
   padding: theme.spacing(4),
   gap: theme.spacing(2),
@@ -75,20 +75,20 @@ export default function SignIn(props) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
-      email: data.get("email"),
+      username: data.get("username"),
       password: data.get("password"),
     });
   };
 
   const validateInputs = () => {
-    const email = document.getElementById("email");
+    const username = document.getElementById("username");
     const password = document.getElementById("password");
 
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!username.value) {
       setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
+      setEmailErrorMessage("Please enter a valid username.");
       isValid = false;
     } else {
       setEmailError(false);
@@ -115,13 +115,23 @@ export default function SignIn(props) {
           sx={{ position: "fixed", top: "1rem", right: "1rem" }}
         />
         <Card variant="outlined">
-          <SitemarkIcon />
+          <Box
+            component="img"
+            src={logoImage}
+            alt="logo"
+            sx={{ width: "160px", height: "160px" }}
+          />
           <Typography
             component="h1"
             variant="h4"
-            sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
+            sx={{
+              width: "100%",
+              fontSize: "clamp(2rem, 10vw, 2.15rem)",
+              textAlign: "center",
+              mt: -2,
+            }}
           >
-            Sign in
+            Sign In
           </Typography>
           <Box
             component="form"
@@ -131,39 +141,29 @@ export default function SignIn(props) {
               display: "flex",
               flexDirection: "column",
               width: "100%",
-              gap: 2,
+              gap: 1,
             }}
           >
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="username">Username</FormLabel>
               <TextField
                 error={emailError}
                 helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                autoComplete="email"
+                id="username"
+                type="text"
+                name="username"
+                placeholder="Enter your username"
+                autoComplete="username"
                 autoFocus
                 required
                 fullWidth
                 variant="outlined"
                 color={emailError ? "error" : "primary"}
-                sx={{ ariaLabel: "email" }}
+                sx={{ ariaLabel: "username" }}
               />
             </FormControl>
             <FormControl>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <FormLabel htmlFor="password">Password</FormLabel>
-                <Link
-                  component="button"
-                  onClick={handleClickOpen}
-                  variant="body2"
-                  sx={{ alignSelf: "baseline" }}
-                >
-                  Forgot your password?
-                </Link>
-              </Box>
+              <FormLabel htmlFor="password">Password</FormLabel>
               <TextField
                 error={passwordError}
                 helperText={passwordErrorMessage}
@@ -179,10 +179,33 @@ export default function SignIn(props) {
                 color={passwordError ? "error" : "primary"}
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+            <FormControl>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Remember me"
+                />
+                <FormControlLabel
+                  control={
+                    <Link
+                      component="button"
+                      onClick={handleClickOpen}
+                      variant="body2"
+                      sx={{ alignSelf: "baseline" }}
+                    >
+                      Forgot your password?
+                    </Link>
+                  }
+                />
+              </Box>
+            </FormControl>
+
             <ForgotPassword open={open} handleClose={handleClose} />
             <Button
               type="submit"
@@ -193,30 +216,9 @@ export default function SignIn(props) {
               Sign in
             </Button>
             <Typography sx={{ textAlign: "center" }}>
-              Don&apos;t have an account?{" "}
-              <span>
-                <Link
-                  href="/material-ui/getting-started/templates/sign-in/"
-                  variant="body2"
-                  sx={{ alignSelf: "center" }}
-                >
-                  Sign up
-                </Link>
-              </span>
+              Don&apos;t have an account? Contact Admin
             </Typography>
           </Box>
-          {/* <Divider>or</Divider> */}
-          {/* <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Button
-              type="submit"
-              fullWidth
-              variant="outlined"
-              onClick={() => alert("Sign in with Google")}
-              startIcon={<GoogleIcon />}
-            >
-              Sign in with Google
-            </Button>
-          </Box> */}
         </Card>
       </SignInContainer>
     </AppTheme>
