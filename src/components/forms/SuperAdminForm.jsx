@@ -49,6 +49,7 @@ export function SuperAdminForm({ formData, handleChange, errors }) {
           helperText={errors.password}
           fullWidth
           sx={{ mb: 2 }}
+          autoComplete="new-password"
         />
       </Grid>
       <Grid item xs={6}>
@@ -63,6 +64,7 @@ export function SuperAdminForm({ formData, handleChange, errors }) {
           helperText={errors.confirmPassword}
           fullWidth
           sx={{ mb: 2 }}
+          autoComplete="new-password"
         />
       </Grid>
       <Grid item xs={6}>

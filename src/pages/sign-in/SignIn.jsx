@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
@@ -16,12 +17,20 @@ import ForgotPassword from "./ForgotPassword";
 import AppTheme from "../../shared-theme/AppTheme";
 import ColorModeSelect from "../../shared-theme/ColorModeSelect";
 import logoImage from "../../assets/sdmlogo1.webp";
+import { useDispatch, useSelector } from "react-redux"; // Redux imports
+import { login } from "../../features/auth/authSlice"; // Import the login action
+import {
+  selectAuthLoading,
+  selectAuthError,
+} from "../../features/auth/authSelectors";
+import { getFromLocalStorage, saveToLocalStorage } from "../../utils/storage";
+import { useNavigate } from "react-router-dom";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignSelf: "center",
-  alignItems: "center", // Center the icon and title
+  alignItems: "center",
   width: "100%",
   padding: theme.spacing(4),
   gap: theme.spacing(2),
@@ -62,7 +71,12 @@ export default function SignIn(props) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [open, setOpen] = React.useState(false);
+  const [formData, setFormData] = useState({ username: "", password: "" });
 
+  const dispatch = useDispatch();
+  const loading = useSelector(selectAuthLoading);
+  const error = useSelector(selectAuthError);
+  const navigate = useNavigate();
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -71,22 +85,16 @@ export default function SignIn(props) {
     setOpen(false);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      username: data.get("username"),
-      password: data.get("password"),
-    });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const validateInputs = () => {
-    const username = document.getElementById("username");
-    const password = document.getElementById("password");
-
+    const { username, password } = formData;
     let isValid = true;
 
-    if (!username.value) {
+    if (!username) {
       setEmailError(true);
       setEmailErrorMessage("Please enter a valid username.");
       isValid = false;
@@ -95,7 +103,7 @@ export default function SignIn(props) {
       setEmailErrorMessage("");
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage("Password must be at least 6 characters long.");
       isValid = false;
@@ -105,6 +113,20 @@ export default function SignIn(props) {
     }
 
     return isValid;
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (validateInputs()) {
+      // Dispatch the Redux action to log in the user
+      dispatch(login(formData)).then((response) => {
+        if (response.payload.token) {
+          saveToLocalStorage("authToken", response.payload.token);
+          props.onLogin();
+          navigate("/");
+        }
+      });
+    }
   };
 
   return (
@@ -152,6 +174,8 @@ export default function SignIn(props) {
                 id="username"
                 type="text"
                 name="username"
+                value={formData.username}
+                onChange={handleChange}
                 placeholder="Enter your username"
                 autoComplete="username"
                 autoFocus
@@ -159,7 +183,6 @@ export default function SignIn(props) {
                 fullWidth
                 variant="outlined"
                 color={emailError ? "error" : "primary"}
-                sx={{ ariaLabel: "username" }}
               />
             </FormControl>
             <FormControl>
@@ -168,11 +191,12 @@ export default function SignIn(props) {
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 name="password"
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="••••••"
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                autoFocus
                 required
                 fullWidth
                 variant="outlined"
@@ -191,18 +215,14 @@ export default function SignIn(props) {
                   control={<Checkbox value="remember" color="primary" />}
                   label="Remember me"
                 />
-                <FormControlLabel
-                  control={
-                    <Link
-                      component="button"
-                      onClick={handleClickOpen}
-                      variant="body2"
-                      sx={{ alignSelf: "baseline" }}
-                    >
-                      Forgot your password?
-                    </Link>
-                  }
-                />
+                <Link
+                  component="button"
+                  onClick={handleClickOpen}
+                  variant="body2"
+                  sx={{ alignSelf: "baseline" }}
+                >
+                  Forgot your password?
+                </Link>
               </Box>
             </FormControl>
 
@@ -211,10 +231,15 @@ export default function SignIn(props) {
               type="submit"
               fullWidth
               variant="contained"
-              onClick={validateInputs}
+              disabled={loading}
             >
-              Sign in
+              {loading ? "Signing in..." : "Sign in"}
             </Button>
+            {error && (
+              <Typography color="error" sx={{ textAlign: "center", mt: 2 }}>
+                {error}
+              </Typography>
+            )}
             <Typography sx={{ textAlign: "center" }}>
               Don&apos;t have an account? Contact Admin
             </Typography>

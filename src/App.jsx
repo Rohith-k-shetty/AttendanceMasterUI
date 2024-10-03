@@ -16,6 +16,7 @@ import {
 } from "./theme/customizations";
 import AppRoutes from "./routes/AppRoutes"; // Import your routes
 import SignIn from "./pages/sign-in/SignIn";
+import { getFromLocalStorage } from "./utils/storage";
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -25,13 +26,17 @@ const xThemeComponents = {
 };
 
 function App(props) {
-  const [login, setLogin] = React.useState(false);
-
+  const [isAuthenticated, setIsAuthenticated] = React.useState(
+    !!getFromLocalStorage("authToken")
+  );
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
   return (
     <AppTheme {...props} themeComponents={xThemeComponents}>
       <CssBaseline enableColorScheme />
       <Router>
-        {login ? (
+        {isAuthenticated ? (
           <Box sx={{ display: "flex" }}>
             <SideMenu />
             <AppNavbar />
@@ -55,12 +60,12 @@ function App(props) {
                 }}
               >
                 <Header />
-                <AppRoutes />
+                <AppRoutes isAuthenticated={isAuthenticated} />
               </Stack>
             </Box>
           </Box>
         ) : (
-          <SignIn />
+          <SignIn onLogin={handleLogin} />
         )}
       </Router>
     </AppTheme>
