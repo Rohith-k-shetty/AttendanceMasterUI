@@ -10,10 +10,12 @@ import {
 
 export function DynamicFilter({
   departments,
+  courses,
   years,
   users,
   statusOptions,
   selectedDepartment,
+  selectedCourse,
   selectedYear,
   selectedUser,
   selectedStatus,
@@ -22,14 +24,16 @@ export function DynamicFilter({
   handleChange,
   handleSelectSearch,
   setSelectedUser,
-  requiredFilters, // New prop to indicate which filters to show
+  requiredFilters,
+  handleInputChange,
+  loading, // New prop to indicate which filters to show
 }) {
   return (
     <Box sx={{ mb: 3 }}>
       {/* First Row: Filters */}
       <Stack direction="row" spacing={2} sx={{ mb: 2, flexWrap: "wrap" }}>
         {/* Department Filter */}
-        {requiredFilters.includes("department") && (
+        {requiredFilters.includes("department") && departments && (
           <TextField
             label="Department"
             name="department"
@@ -42,14 +46,34 @@ export function DynamicFilter({
           >
             {departments.map((dept) => (
               <MenuItem key={dept.id} value={dept.id}>
-                {dept.name}
+                {dept.departmentName}-{dept.departmentCode}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
+
+        {/* Department Filter */}
+        {requiredFilters.includes("course") && courses && (
+          <TextField
+            label="Course"
+            name="course"
+            variant="outlined"
+            size="small"
+            select
+            value={selectedCourse || ""} // Handle empty state
+            onChange={handleChange}
+            sx={{ minWidth: 240 }}
+          >
+            {courses.map((dept) => (
+              <MenuItem key={dept.id} value={dept.id}>
+                {dept.courseName}-{dept.courseCode}
               </MenuItem>
             ))}
           </TextField>
         )}
 
         {/* Status Filter */}
-        {requiredFilters.includes("status") && (
+        {requiredFilters.includes("status") && statusOptions && (
           <TextField
             label="Status"
             name="status"
@@ -69,7 +93,7 @@ export function DynamicFilter({
         )}
 
         {/* Year Filter */}
-        {requiredFilters.includes("year") && (
+        {requiredFilters.includes("year") && years && (
           <TextField
             label="Year"
             name="year"
@@ -82,7 +106,7 @@ export function DynamicFilter({
           >
             {years.map((year) => (
               <MenuItem key={year.id} value={year.id}>
-                {year.name}
+                {year.year}
               </MenuItem>
             ))}
           </TextField>
@@ -92,11 +116,22 @@ export function DynamicFilter({
         {requiredFilters.includes("user") && (
           <Autocomplete
             options={users}
-            getOptionLabel={(option) => option.name}
-            value={selectedUser}
+            getOptionLabel={(option) => {
+              const name = option.name ? option.name : "";
+              const username = option.username ? `(${option.username})` : "";
+              const phone = option.phoneNo ? ` - ${option.phoneNo}` : "";
+              return `${name} ${username}${phone}`.trim(); // Combine and trim the string
+            }}
+            onInputChange={(event, newInputValue) => {
+              if (event && event.type === "change") {
+                handleInputChange(event, newInputValue);
+              }
+            }}
+            value={selectedUser} // Controlled value
+            loading={loading}
             onChange={(event, newValue) => {
-              setSelectedUser(newValue);
-              handleSelectSearch(newValue ? newValue.id : null);
+              setSelectedUser(newValue); // Update selected user
+              handleSelectSearch(newValue ? newValue.id : null); // Pass the selected user ID to the handler
             }}
             disableClearable
             renderInput={(params) => (
@@ -106,7 +141,7 @@ export function DynamicFilter({
                 variant="outlined"
                 size="small"
                 sx={{
-                  minWidth: 180,
+                  minWidth: 200,
                   "& .MuiAutocomplete-popupIndicator": {
                     display: "none",
                   },

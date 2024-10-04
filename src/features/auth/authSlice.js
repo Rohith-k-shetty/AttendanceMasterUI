@@ -6,11 +6,11 @@ export const login = createAsyncThunk(
   "auth/login",
   async (credentials, thunkAPI) => {
     try {
-      return await loginUser(credentials); // Calls the loginUser function in the service
+      return await loginUser(credentials);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data.message || "Login failed"
-      ); // Handles error in case the API call fails
+      );
     }
   }
 );
@@ -24,6 +24,10 @@ const authSlice = createSlice({
     isAuthenticated: false, // Tracks if the user is logged in
   },
   reducers: {
+    setUserDetails(state, action) {
+      state.user = action.payload; // Set user data in state
+      state.isAuthenticated = true; // Set authenticated to true
+    },
     logout(state) {
       state.user = null; // Clear user data
       state.isAuthenticated = false; // Set authenticated to false
@@ -47,6 +51,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions; // Exporting logout action for use in other parts of the app
+export const { setUserDetails, logout } = authSlice.actions; // Exporting logout action for use in other parts of the app
 
 export default authSlice.reducer;

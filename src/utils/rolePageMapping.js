@@ -9,7 +9,7 @@ const rolePageMapping = {
       },
       {
         page: "AdminPage",
-        requiredFilters: ["department", "status", "user"],
+        requiredFilters: ["course", "status", "user"],
       },
       {
         page: "TeacherPage",
@@ -17,7 +17,7 @@ const rolePageMapping = {
       },
       {
         page: "StudentPage",
-        requiredFilters: ["department", "status", "year", "user"],
+        requiredFilters: ["course", "status", "year", "user"],
       },
     ],
   },

@@ -18,13 +18,14 @@ import AppTheme from "../../shared-theme/AppTheme";
 import ColorModeSelect from "../../shared-theme/ColorModeSelect";
 import logoImage from "../../assets/sdmlogo1.webp";
 import { useDispatch, useSelector } from "react-redux"; // Redux imports
-import { login } from "../../features/auth/authSlice"; // Import the login action
+import { login, setUserDetails } from "../../features/auth/authSlice"; // Import the login action
 import {
   selectAuthLoading,
   selectAuthError,
 } from "../../features/auth/authSelectors";
 import { getFromLocalStorage, saveToLocalStorage } from "../../utils/storage";
 import { useNavigate } from "react-router-dom";
+import { decodeToken } from "../../utils/auth";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -122,6 +123,17 @@ export default function SignIn(props) {
       dispatch(login(formData)).then((response) => {
         if (response.payload.token) {
           saveToLocalStorage("authToken", response.payload.token);
+          const decodedToken = decodeToken(response.payload.token);
+          const userDetails = {
+            yearId: decodedToken.user.yearId,
+            courseId: decodedToken.user.courseId,
+            departmentId: decodedToken.user.departmentId,
+            name: decodedToken.user.name,
+            email: decodedToken.user.email,
+            role: decodedToken.user.role,
+          };
+          dispatch(setUserDetails(userDetails));
+          saveToLocalStorage("user", userDetails);
           props.onLogin();
           navigate("/");
         }
