@@ -20,11 +20,23 @@ const menuItems = [
     children: [], // No children for Home
   },
   {
+    text: "table",
+    icon: <HomeRoundedIcon />,
+    path: "/table", // Route for Home
+    children: [], // No children for Home
+  },
+  {
     text: "Users",
     icon: <PeopleRoundedIcon />,
     path: null, // No route for parent "Users"
     children: [
-      { text: "Admins", icon: <PeopleRoundedIcon />, path: "/users/admins" },
+      {
+        text: "Super Admin",
+        icon: <PeopleRoundedIcon />,
+        path: "/users/super-admin",
+      },
+
+      { text: "Admin", icon: <PeopleRoundedIcon />, path: "/users/admins" },
       {
         text: "Teacher",
         icon: <AssignmentRoundedIcon />,

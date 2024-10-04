@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import { TextField, MenuItem, Grid } from "@mui/material";
 
 export function StudentForm({
@@ -7,6 +7,7 @@ export function StudentForm({
   errors,
   years,
   departments,
+  courses,
 }) {
   const genderOptions = [
     { name: "Male" },
@@ -54,6 +55,7 @@ export function StudentForm({
           helperText={errors.password}
           fullWidth
           sx={{ mb: 2 }}
+          autoComplete="new-password"
         />
       </Grid>
       <Grid item xs={6}>
@@ -68,6 +70,7 @@ export function StudentForm({
           helperText={errors.confirmPassword}
           fullWidth
           sx={{ mb: 2 }}
+          autoComplete="new-password"
         />
       </Grid>
       <Grid item xs={6}>
@@ -106,14 +109,14 @@ export function StudentForm({
       </Grid>
       <Grid item xs={6}>
         <TextField
-          label="Department"
-          name="departmentId"
+          label="Course"
+          name="courseId"
           select
           variant="outlined"
-          value={formData.departmentId}
+          value={formData.courseId}
           onChange={handleChange}
-          error={!!errors.departmentId}
-          helperText={errors.departmentId}
+          error={!!errors.courseId}
+          helperText={errors.courseId}
           fullWidth
           sx={{ mb: 2 }}
         >

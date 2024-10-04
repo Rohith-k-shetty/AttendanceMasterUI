@@ -1,6 +1,6 @@
+/* eslint-disable react/prop-types */
 import { TextField, MenuItem, Grid } from "@mui/material";
 
-// TeacherForm Component
 export function TeacherForm({ formData, handleChange, errors, departments }) {
   const genderOptions = [
     { name: "Male" },
@@ -48,6 +48,7 @@ export function TeacherForm({ formData, handleChange, errors, departments }) {
           helperText={errors.password}
           fullWidth
           sx={{ mb: 2 }}
+          autoComplete="new-password"
         />
       </Grid>
       <Grid item xs={6}>
@@ -62,6 +63,7 @@ export function TeacherForm({ formData, handleChange, errors, departments }) {
           helperText={errors.confirmPassword}
           fullWidth
           sx={{ mb: 2 }}
+          autoComplete="new-password"
         />
       </Grid>
       <Grid item xs={6}>

@@ -34,6 +34,7 @@ export default function AdminDrawer({
     gender: "",
     phoneNo: "",
     departmentId: "",
+    courseId: "",
     yearId: "",
     parentPhone: "",
     parentEmail: "",
@@ -71,6 +72,7 @@ export default function AdminDrawer({
       gender: "",
       phoneNo: "",
       departmentId: "",
+      courseId: "",
       yearId: "",
       parentPhone: "",
       parentEmail: "",
@@ -147,8 +149,8 @@ export default function AdminDrawer({
         }
         break;
       case "Student":
-        if (!formData.departmentId) {
-          setErrors({ departmentId: "Department is required" });
+        if (!formData.courseId) {
+          setErrors({ courseId: "course is required" });
           return false;
         }
         if (!formData.yearId) {
