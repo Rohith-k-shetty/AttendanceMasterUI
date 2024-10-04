@@ -6,6 +6,7 @@ import {
   MenuItem,
   Box,
   Autocomplete,
+  Paper,
 } from "@mui/material";
 
 export function DynamicFilter({
@@ -26,8 +27,13 @@ export function DynamicFilter({
   setSelectedUser,
   requiredFilters,
   handleInputChange,
-  loading, // New prop to indicate which filters to show
+  loading,
 }) {
+  // this is for adjusting the height
+  // const CustomPaper = (props) => (
+  //   <Paper {...props} sx={{ maxHeight: 200, overflowY: "auto" }} />
+  // );
+
   return (
     <Box sx={{ mb: 3 }}>
       {/* First Row: Filters */}
@@ -80,7 +86,7 @@ export function DynamicFilter({
             variant="outlined"
             size="small"
             select
-            value={selectedStatus || ""} // Handle empty state
+            value={selectedStatus || ""}
             onChange={handleChange}
             sx={{ minWidth: 200 }}
           >
@@ -115,17 +121,15 @@ export function DynamicFilter({
         {/* Search Combo Box */}
         {requiredFilters.includes("user") && (
           <Autocomplete
-            options={users}
+            options={Array.isArray(users) ? users : []} // Ensure users is an array
             getOptionLabel={(option) => {
-              const name = option.name ? option.name : "";
+              const name = option.name || ""; // Handle missing values with fallbacks
               const username = option.username ? `(${option.username})` : "";
               const phone = option.phoneNo ? ` - ${option.phoneNo}` : "";
               return `${name} ${username}${phone}`.trim(); // Combine and trim the string
             }}
             onInputChange={(event, newInputValue) => {
-              if (event && event.type === "change") {
-                handleInputChange(event, newInputValue);
-              }
+              handleInputChange(event, newInputValue); // Handle input value change directly
             }}
             value={selectedUser} // Controlled value
             loading={loading}
@@ -134,6 +138,7 @@ export function DynamicFilter({
               handleSelectSearch(newValue ? newValue.id : null); // Pass the selected user ID to the handler
             }}
             disableClearable
+            // PaperComponent={CustomPaper}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -143,7 +148,7 @@ export function DynamicFilter({
                 sx={{
                   minWidth: 200,
                   "& .MuiAutocomplete-popupIndicator": {
-                    display: "none",
+                    display: "none", // Hide the popup indicator if needed
                   },
                 }}
               />

@@ -6,7 +6,6 @@ export function StudentForm({
   handleChange,
   errors,
   years,
-  departments,
   courses,
 }) {
   const genderOptions = [
@@ -27,7 +26,8 @@ export function StudentForm({
           error={!!errors.name}
           helperText={errors.name}
           fullWidth
-          sx={{ mb: 2 }} // Margin between fields
+          sx={{ mb: 2 }}
+          autoComplete="name"
         />
       </Grid>
       <Grid item xs={6}>
@@ -40,6 +40,7 @@ export function StudentForm({
           error={!!errors.username}
           helperText={errors.username}
           fullWidth
+          autoComplete="username"
           sx={{ mb: 2 }}
         />
       </Grid>
@@ -120,9 +121,9 @@ export function StudentForm({
           fullWidth
           sx={{ mb: 2 }}
         >
-          {departments.map((dept) => (
-            <MenuItem key={dept.id} value={dept.id}>
-              {dept.name}
+          {courses.map((c) => (
+            <MenuItem key={c.id} value={c.id}>
+              {c.courseName}
             </MenuItem>
           ))}
         </TextField>
@@ -142,7 +143,7 @@ export function StudentForm({
         >
           {years.map((year) => (
             <MenuItem key={year.id} value={year.id}>
-              {year.name}
+              {year.year}
             </MenuItem>
           ))}
         </TextField>

@@ -15,6 +15,13 @@ import { AdminForm } from "./forms/AdminForm";
 import { TeacherForm } from "./forms/TeacherForm";
 import { StudentForm } from "./forms/StudentForm";
 import PersonIcon from "@mui/icons-material/Person";
+import {
+  selectUserError,
+  selectUserLoading,
+  selectUserSuccess,
+} from "../features/users/userSelectors";
+import { useDispatch, useSelector } from "react-redux";
+import { resetUserState, saveUser } from "../features/users/userSlice";
 
 export default function AdminDrawer({
   open,
@@ -22,13 +29,15 @@ export default function AdminDrawer({
   role,
   departments,
   years,
+  courses,
+  token,
 }) {
   const [formData, setFormData] = useState({
     name: "",
     username: "",
     password: "",
     confirmPassword: "",
-    role: "",
+    role: role,
     status: "Active",
     email: "",
     gender: "",
@@ -39,8 +48,11 @@ export default function AdminDrawer({
     parentPhone: "",
     parentEmail: "",
   });
-
   const [errors, setErrors] = useState({});
+  const loading = useSelector(selectUserLoading);
+  const error = useSelector(selectUserError);
+  const success = useSelector(selectUserSuccess);
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,7 +78,7 @@ export default function AdminDrawer({
       username: "",
       password: "",
       confirmPassword: "",
-      role: "",
+      role: role,
       status: "Active",
       email: "",
       gender: "",
@@ -77,28 +89,22 @@ export default function AdminDrawer({
       parentPhone: "",
       parentEmail: "",
     });
-    setErrors({}); // Clear errors on reset
+    setErrors({});
+    dispatch(resetUserState()); // Clear errors on reset
   };
 
   const validateForm = () => {
-    const newErrors = {};
-
-    // Step 1: Validate Name
     if (!formData.name) {
       setErrors({ name: "Name is required" });
-      return false; // Stop validation here
+      return false;
     }
-
-    // Step 2: Validate Username
     if (!formData.username) {
       setErrors({ username: "Username is required" });
-      return false; // Stop validation here
+      return false;
     }
-
-    // Step 3: Validate Password
     if (!formData.password) {
       setErrors({ password: "Password is required" });
-      return false; // Stop validation here
+      return false;
     } else {
       const passwordPattern = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_]).{8,}$/;
       if (!passwordPattern.test(formData.password)) {
@@ -106,21 +112,17 @@ export default function AdminDrawer({
           password:
             "Password must have at least 1 capital letter, 1 number, and 1 special character",
         });
-        return false; // Stop validation here
+        return false;
       }
     }
-
-    // Step 4: Validate Confirm Password
     if (!formData.confirmPassword) {
       setErrors({ confirmPassword: "Confirm password is required" });
-      return false; // Stop validation here
+      return false;
     }
-
     if (formData.password !== formData.confirmPassword) {
       setErrors({ confirmPassword: "Passwords must match" });
-      return false; // Stop validation here
+      return false;
     }
-
     if (!formData.email) {
       setErrors({ email: "Email is required" });
       return false;
@@ -169,15 +171,21 @@ export default function AdminDrawer({
       default:
         break;
     }
-
-    // If no errors
-    setErrors({}); // Clear previous errors if all fields pass validation
+    setErrors({});
     return true;
   };
 
   const handleSubmit = () => {
     if (validateForm()) {
-      console.log("Form Data:", formData);
+      dispatch(saveUser({ token, body: formData }))
+        .unwrap()
+        .then(() => {
+          onClose();
+          handleReset();
+        })
+        .catch((error) => {
+          console.error("Failed to save user:", error);
+        });
     }
   };
 
@@ -217,8 +225,8 @@ export default function AdminDrawer({
             formData={formData}
             handleChange={handleChange}
             errors={errors}
-            departments={departments}
             years={years}
+            courses={courses}
           />
         );
       default:
@@ -283,6 +291,13 @@ export default function AdminDrawer({
           <Grid container spacing={2}>
             {renderFormByRole()}
           </Grid>
+          {error && (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+              <Typography color="error" align="center">
+                {error.message}
+              </Typography>
+            </Box>
+          )}
           {/* Centered Save and Reset buttons with margin */}
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <Stack direction="row" spacing={2}>
@@ -290,8 +305,9 @@ export default function AdminDrawer({
                 variant="contained"
                 color="primary"
                 onClick={handleSubmit}
+                disabled={loading}
               >
-                Save
+                {loading ? "Saving..." : "Save"}
               </Button>
               <Button variant="outlined" onClick={handleReset}>
                 Reset

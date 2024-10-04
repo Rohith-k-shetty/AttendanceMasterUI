@@ -12,7 +12,6 @@ export const getDepartments = createAsyncThunk(
   async (token, thunkAPI) => {
     try {
       const response = await fetchDepartments(token);
-      console.log(response);
       // Call your API function
       return response.data; // Assuming the API returns data in this structure
     } catch (error) {

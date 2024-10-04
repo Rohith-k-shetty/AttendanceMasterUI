@@ -38,8 +38,7 @@ export default function StudentPage() {
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [userId, setUserId] = useState("");
-  const user = useSelector((state) => state.auth.user);
-  console.log(user);
+  // const user = useSelector((state) => state.auth.user);
 
   // dynamic filgter part
   const currentRole = "SuperAdmin";
@@ -77,37 +76,12 @@ export default function StudentPage() {
             query: { searchTerm: newInputValue, role: "Student" },
           })
         );
+      } else {
+        dispatch(clearSearch());
       }
-      // else {
-      //   dispatch(clearSearch());
-      // }
     },
     [dispatch, token]
   );
-  console.log(users);
-
-  // // Dummy departments and years for dropdowns
-  // const departments = [
-  //   { id: 1, name: "Science" },
-  //   { id: 2, name: "Mathematics" },
-  //   { id: 3, name: "English" },
-  // ];
-
-  // const courses = [
-  //   { id: 1, name: "MCA" },
-  //   { id: 2, name: "BCA" },
-  //   { id: 3, name: "BBA" },
-  // ];
-
-  // const years = [
-  //   { id: 1, name: "First Year" },
-  //   { id: 2, name: "Second Year" },
-  // ];
-
-  // const users = [
-  //   // { id: 1, name: "John Doe" },
-  //   // { id: 2, name: "Jane Smith" },
-  // ];
 
   const statusOptions = [
     { value: "active", label: "Active" },
@@ -217,6 +191,8 @@ export default function StudentPage() {
         role={"Student"}
         departments={departments}
         years={years}
+        courses={courses}
+        token={token}
       />
     </Box>
   );
