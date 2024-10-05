@@ -5,25 +5,33 @@ const API_URL = "http://localhost:3001/api";
 
 const fetchUsersBySearch = async (token, query) => {
   try {
-    const department = query.departmentId
-      ? `departmentId=${query.departmentId}&`
-      : "departmentId=All&";
-    const course = query.courseId
-      ? `courseId=${query.courseId}&`
-      : "courseId=All&";
-    const role = query.role ? `role=${query.role}&` : "role=All&";
-    // Concatenate the query parameters
-    const queryString = `${department}${course}${role}searchTerm=${query.searchTerm}`;
-    console.log(`${API_URL}/users/search/byNameOrPhone?${queryString}`);
+    const params = new URLSearchParams();
 
-    const response = await axios.get(
-      `${API_URL}/users/search/byNameOrPhone?${queryString}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    // Append parameters only if they are defined and not empty
+    if (query.departmentId !== undefined && query.departmentId !== "") {
+      params.append("departmentId", query.departmentId);
+    }
+    if (query.courseId !== undefined && query.courseId !== "") {
+      params.append("courseId", query.courseId);
+    }
+    if (query.role !== undefined && query.role !== "") {
+      params.append("role", query.role);
+    }
+    if (query.searchTerm !== undefined && query.searchTerm !== "") {
+      params.append("searchTerm", query.searchTerm);
+    }
+
+    // Construct the full URL with the query parameters
+    const url = `${API_URL}/users/search/byNameOrPhone?${params.toString()}`;
+
+    console.log(url);
+
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     return response.data;
   } catch (error) {
     console.error(

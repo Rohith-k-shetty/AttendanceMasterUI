@@ -72,7 +72,7 @@ export function DynamicFilter({
           >
             {courses.map((dept) => (
               <MenuItem key={dept.id} value={dept.id}>
-                {dept.courseName}-{dept.courseCode}
+                {dept.courseName}({dept.courseCode})
               </MenuItem>
             ))}
           </TextField>
@@ -129,7 +129,9 @@ export function DynamicFilter({
               return `${name} ${username}${phone}`.trim(); // Combine and trim the string
             }}
             onInputChange={(event, newInputValue) => {
-              handleInputChange(event, newInputValue); // Handle input value change directly
+              if (event && event.type === "change") {
+                handleInputChange(event, newInputValue);
+              }
             }}
             value={selectedUser} // Controlled value
             loading={loading}
