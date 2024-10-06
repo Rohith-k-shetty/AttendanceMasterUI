@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, Tooltip } from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
 const EditButton = ({ params, handleEdit }) => {

@@ -51,8 +51,10 @@ const UserTable = ({
             },
           }}
           // This is avoid the unessary row selection
-          onRowClick={(params) => {
-            params.event.stopPropagation();
+          onCellClick={(params, event) => {
+            if (event && event.stopPropagation) {
+              event.stopPropagation();
+            }
           }}
         />
       </Box>

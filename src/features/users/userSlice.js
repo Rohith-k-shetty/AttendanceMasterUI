@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { saveUserDeatils } from "../../services/userService";
+import { saveUserDeatils, updateUserDeatil } from "../../services/userService";
 
 export const saveUser = createAsyncThunk(
-  "search/fetchUsers",
+  "post/saveUser",
   async ({ token, body }, thunkAPI) => {
     try {
       const response = await saveUserDeatils(token, body);
@@ -10,6 +10,20 @@ export const saveUser = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to create user"
+      );
+    }
+  }
+);
+
+export const editUser = createAsyncThunk(
+  "post/editUser",
+  async ({ token, body }, thunkAPI) => {
+    try {
+      const response = await updateUserDeatil(token, body);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Failed to update user"
       );
     }
   }
@@ -31,6 +45,7 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Save User Actions
       .addCase(saveUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -41,6 +56,21 @@ const userSlice = createSlice({
         state.success = true;
       })
       .addCase(saveUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Edit User Actions
+      .addCase(editUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(editUser.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(editUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

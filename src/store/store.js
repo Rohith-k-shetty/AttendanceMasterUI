@@ -4,6 +4,8 @@ import verticalReducer from "../features/vertical/verticalSlice";
 import searchReducer from "../features/search/searchSlice";
 import userReducer from "../features/users/userSlice";
 import userTableReducer from "../features/users/userTableSlice";
+import getUserReducer from "../features/users/getUserSlice";
+
 const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -11,6 +13,7 @@ const store = configureStore({
     search: searchReducer,
     users: userReducer,
     userTable: userTableReducer,
+    getUser: getUserReducer,
   },
 });
 

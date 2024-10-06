@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Drawer,
   Box,
@@ -10,33 +10,37 @@ import {
   Grid,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { SuperAdminForm } from "./forms/superAdminForm";
-import { AdminForm } from "./forms/AdminForm";
-import { TeacherForm } from "./forms/TeacherForm";
-import { StudentForm } from "./forms/StudentForm";
 import PersonIcon from "@mui/icons-material/Person";
+import { useDispatch, useSelector } from "react-redux";
+
+import { StudentEditForm } from "../forms/StudentEditForm";
 import {
   selectUserError,
   selectUserLoading,
-  selectUserSuccess,
-} from "../features/users/userSelectors";
-import { useDispatch, useSelector } from "react-redux";
-import { resetUserState, saveUser } from "../features/users/userSlice";
+} from "../../features/users/userSelectors";
+import { resetUserState, editUser } from "../../features/users/userSlice";
+import { TeacherEditForm } from "../forms/TeacherEditForm";
+import { AdminEditForm } from "../forms/AdminEditForm";
+import { SuperAdminEditForm } from "../forms/SuperAdminEditForm";
 
-export default function AdminDrawer({
+export default function UserEditDrawer({
   open,
   onClose,
   role,
+  user,
   departments,
   years,
   courses,
   token,
 }) {
+  const dispatch = useDispatch();
+  const loading = useSelector(selectUserLoading);
+  const error = useSelector(selectUserError);
+
+  // Initialize form state with user details or empty values
   const [formData, setFormData] = useState({
     name: "",
     username: "",
-    password: "",
-    confirmPassword: "",
     role: role,
     status: "Active",
     email: "",
@@ -48,11 +52,28 @@ export default function AdminDrawer({
     parentPhone: "",
     parentEmail: "",
   });
+
   const [errors, setErrors] = useState({});
-  const loading = useSelector(selectUserLoading);
-  const error = useSelector(selectUserError);
-  const success = useSelector(selectUserSuccess);
-  const dispatch = useDispatch();
+
+  // Populate formData with user details if user is passed
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        ...formData,
+        name: user.name || "",
+        username: user.username || "",
+        role: user.role || role,
+        email: user.email || "",
+        gender: user.gender || "",
+        phoneNo: user.phoneNo || "",
+        departmentId: user.departmentId || "",
+        courseId: user.courseId || "",
+        yearId: user.yearId || "",
+        parentPhone: user.parentPhone || "",
+        parentEmail: user.parentEmail || "",
+      });
+    }
+  }, [user, role]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,26 +92,39 @@ export default function AdminDrawer({
     }
   };
 
-  // Reset form and errors
   const handleReset = () => {
-    setFormData({
-      name: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
-      role: role,
-      status: "Active",
-      email: "",
-      gender: "",
-      phoneNo: "",
-      departmentId: "",
-      courseId: "",
-      yearId: "",
-      parentPhone: "",
-      parentEmail: "",
-    });
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        username: user.username || "",
+        role: user.role || role,
+        email: user.email || "",
+        gender: user.gender || "",
+        phoneNo: user.phoneNo || "",
+        departmentId: user.departmentId || "",
+        courseId: user.courseId || "",
+        yearId: user.yearId || "",
+        parentPhone: user.parentPhone || "",
+        parentEmail: user.parentEmail || "",
+      });
+    } else {
+      setFormData({
+        name: "",
+        username: "",
+        role: role,
+        status: "Active",
+        email: "",
+        gender: "",
+        phoneNo: "",
+        departmentId: "",
+        courseId: "",
+        yearId: "",
+        parentPhone: "",
+        parentEmail: "",
+      });
+    }
     setErrors({});
-    dispatch(resetUserState()); // Clear errors on reset
+    dispatch(resetUserState());
   };
 
   const validateForm = () => {
@@ -100,27 +134,6 @@ export default function AdminDrawer({
     }
     if (!formData.username) {
       setErrors({ username: "Username is required" });
-      return false;
-    }
-    if (!formData.password) {
-      setErrors({ password: "Password is required" });
-      return false;
-    } else {
-      const passwordPattern = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_]).{8,}$/;
-      if (!passwordPattern.test(formData.password)) {
-        setErrors({
-          password:
-            "Password must have at least 1 capital letter, 1 number, and 1 special character",
-        });
-        return false;
-      }
-    }
-    if (!formData.confirmPassword) {
-      setErrors({ confirmPassword: "Confirm password is required" });
-      return false;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      setErrors({ confirmPassword: "Passwords must match" });
       return false;
     }
     if (!formData.email) {
@@ -139,8 +152,8 @@ export default function AdminDrawer({
     }
     switch (role) {
       case "Admin":
-        if (!formData.departmentId) {
-          setErrors({ departmentId: "Department is required" });
+        if (!formData.courseId) {
+          setErrors({ courseId: "Department is required" });
           return false;
         }
         break;
@@ -152,21 +165,13 @@ export default function AdminDrawer({
         break;
       case "Student":
         if (!formData.courseId) {
-          setErrors({ courseId: "course is required" });
+          setErrors({ courseId: "Course is required" });
           return false;
         }
         if (!formData.yearId) {
           setErrors({ yearId: "Year is required" });
           return false;
         }
-        if (formData.parentEmail) {
-          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailPattern.test(formData.parentEmail)) {
-            setErrors({ parentEmail: "Invalid email address" });
-            return false;
-          }
-        }
-
         break;
       default:
         break;
@@ -177,24 +182,23 @@ export default function AdminDrawer({
 
   const handleSubmit = () => {
     if (validateForm()) {
-      dispatch(saveUser({ token, body: formData }))
+      dispatch(editUser({ token, body: formData }))
         .unwrap()
         .then(() => {
           onClose();
           handleReset();
         })
         .catch((error) => {
-          console.error("Failed to save user:", error);
+          console.error("Failed to edit user:", error);
         });
     }
   };
 
-  // Render form component based on the role
   const renderFormByRole = () => {
     switch (role) {
       case "SuperAdmin":
         return (
-          <SuperAdminForm
+          <SuperAdminEditForm
             formData={formData}
             handleChange={handleChange}
             errors={errors}
@@ -202,7 +206,7 @@ export default function AdminDrawer({
         );
       case "Admin":
         return (
-          <AdminForm
+          <AdminEditForm
             formData={formData}
             handleChange={handleChange}
             errors={errors}
@@ -211,7 +215,7 @@ export default function AdminDrawer({
         );
       case "Teacher":
         return (
-          <TeacherForm
+          <TeacherEditForm
             formData={formData}
             handleChange={handleChange}
             errors={errors}
@@ -221,7 +225,7 @@ export default function AdminDrawer({
         );
       case "Student":
         return (
-          <StudentForm
+          <StudentEditForm
             formData={formData}
             handleChange={handleChange}
             errors={errors}
@@ -247,7 +251,6 @@ export default function AdminDrawer({
         },
       }}
     >
-      {/* Centered header */}
       <Box
         sx={{
           display: "flex",
@@ -257,37 +260,29 @@ export default function AdminDrawer({
         }}
       >
         <Typography variant="h6" align="center">
-          Add New {role}
+          Edit {role}
         </Typography>
         <IconButton
           onClick={onClose}
-          sx={{ position: "absolute", right: "16px" }} // Close icon on the right
+          sx={{ position: "absolute", right: "16px" }}
         >
           <CloseIcon />
         </IconButton>
       </Box>
-
-      {/* Centered logo icon */}
       <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
         <Avatar sx={{ width: 80, height: 80 }}>
-          {" "}
-          {/* Bigger avatar */}
           <PersonIcon fontSize="large" />
         </Avatar>
       </Box>
-
-      {/* Center the form */}
       <Box
         component="form"
         sx={{
           width: "100%",
           display: "flex",
-          justifyContent: "center", // Centers the form horizontally
+          justifyContent: "center",
         }}
       >
         <Box sx={{ width: "90%" }}>
-          {" "}
-          {/* Limits form width */}
           <Grid container spacing={2}>
             {renderFormByRole()}
           </Grid>
@@ -298,7 +293,6 @@ export default function AdminDrawer({
               </Typography>
             </Box>
           )}
-          {/* Centered Save and Reset buttons with margin */}
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <Stack direction="row" spacing={2}>
               <Button

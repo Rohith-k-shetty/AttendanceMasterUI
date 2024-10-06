@@ -1,6 +1,5 @@
 import { Box } from "@mui/material";
 import React from "react";
-import AdminDrawer from "../components/AdminDrawer";
 import { TittleCard } from "../components/TittleCard";
 import { useEffect, useState } from "react";
 import { DynamicFilter } from "../components/DynamicFilter";
@@ -35,9 +34,14 @@ import { mapStudentsToFields } from "../utils/functions";
 import UserTable from "../components/tables/userTable";
 import { studentColumns } from "../utils/studentColums";
 import NoDataFound from "../components/buttons/NoDataFound";
+import UserAddDrawer from "../components/drawer/UserAddDrawer";
+import UserEditDrawer from "../components/drawer/UserEditDrawer";
+import { getUser } from "../features/users/getUserSlice";
+import { selectgetUserData } from "../features/users/getUserSelector";
 
 export default function StudentPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedCourse, setselectedCourse] = useState("");
 
@@ -93,7 +97,8 @@ export default function StudentPage() {
     { value: "Deleted", label: "Deleted" },
   ];
 
-  const usersDblist = useSelector(selectUserTableData); // Fetching user data from Redux state
+  const usersDblist = useSelector(selectUserTableData);
+  const user = useSelector(selectgetUserData);
   const [mappedUsers, setMappedUsers] = useState([]);
   const [pageNo, setPageNo] = useState(0); // Current page
   const [pageSize, setPageSize] = useState(10); // Page size
@@ -203,8 +208,8 @@ export default function StudentPage() {
   }, [usersDblist]);
 
   const handleEdit = (id) => {
-    console.log(`Edit row with id: ${id}`);
-    // Add your edit logic here
+    dispatch(getUser({ token, id }));
+    setEditDrawerOpen(true);
   };
 
   const handleDelete = (id) => {
@@ -280,7 +285,7 @@ export default function StudentPage() {
       </Box>
 
       {/* Drawer for Adding Admin */}
-      <AdminDrawer
+      <UserAddDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         role={"Student"}
@@ -288,6 +293,18 @@ export default function StudentPage() {
         years={years}
         courses={courses}
         token={token}
+      />
+
+      {/* Drawer for editing student */}
+      <UserEditDrawer
+        open={editDrawerOpen}
+        onClose={() => setEditDrawerOpen(false)}
+        role={"Student"}
+        departments={departments}
+        years={years}
+        courses={courses}
+        token={token}
+        user={user}
       />
     </Box>
   );

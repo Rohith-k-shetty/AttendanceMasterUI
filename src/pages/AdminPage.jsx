@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Box } from "@mui/material";
 import CustomizedDataGrid from "../components/CustomizedDataGrid";
-import AdminDrawer from "../components/AdminDrawer";
 import { columns, rows } from "../internals/data/gridData";
 import { TittleCard } from "../components/TittleCard";
 import { DynamicFilter } from "../components/DynamicFilter";
 import rolePageMapping from "../utils/rolePageMapping";
+import UserAddDrawer from "../components/drawer/UserAddDrawer";
 
 export default function AdminPage() {
   const [search, setSearch] = useState("");
@@ -132,7 +132,7 @@ export default function AdminPage() {
       </Box>
 
       {/* Drawer for Adding Admin */}
-      <AdminDrawer
+      <UserAddDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         role={"Admin"}
