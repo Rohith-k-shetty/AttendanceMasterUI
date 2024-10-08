@@ -24,8 +24,6 @@ const fetchUsersBySearch = async (token, query) => {
     // Construct the full URL with the query parameters
     const url = `${API_URL}/users/search/byNameOrPhone?${params.toString()}`;
 
-    console.log(url);
-
     const response = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${token}`,

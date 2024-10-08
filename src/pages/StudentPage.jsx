@@ -38,9 +38,14 @@ import { getUser } from "../features/users/getUserSlice";
 import { selectgetUserData } from "../features/users/getUserSelector";
 import { studentColumns } from "../utils/studentColums";
 import ConfirmationPopup from "../components/buttons/ConfirmationPopup";
-import { deleteUser, resetUser } from "../features/users/userSlice";
+import {
+  activateUser,
+  deleteUser,
+  resetUser,
+} from "../features/users/userSlice";
 import toast from "react-hot-toast";
 import { selectUserLoading } from "../features/users/userSelectors";
+import InfoPopup from "../components/buttons/InfoPopup";
 
 export default function StudentPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -108,8 +113,12 @@ export default function StudentPage() {
   const totalRows = useSelector(selectUserTableTotalCount);
   const [idToDelete, setIdToDelete] = useState(null);
   const [idToReset, setIdToReset] = useState(null);
+  const [idToActivate, setIdToActivate] = useState(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const [isActivateDialogOpen, setIsActivateDialogOpen] = useState(false);
+  const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
+
   const loading = useSelector(selectUserLoading);
   // Handle change for dropdowns
   const handleChange = (event) => {
@@ -230,6 +239,15 @@ export default function StudentPage() {
     setIsResetDialogOpen(true);
   };
 
+  const openActivateDialog = (id) => {
+    setIdToActivate(id);
+    setIsActivateDialogOpen(true);
+  };
+
+  const openInfoDialog = (id) => {
+    setIsInfoDialogOpen(true);
+  };
+
   const handleConfirmDelete = (idToDelete) => {
     dispatch(deleteUser({ token, id: idToDelete }))
       .unwrap()
@@ -249,6 +267,17 @@ export default function StudentPage() {
       })
       .catch((error) => {
         toast.error(`Failed to reset password for user. ${error.message}`);
+      });
+  };
+
+  const handleConfirmActivate = (idToActivate) => {
+    dispatch(activateUser({ token, id: idToActivate }))
+      .unwrap()
+      .then(() => {
+        toast.success(`Successfully Activated user.`);
+      })
+      .catch((error) => {
+        toast.error(`Failed to Activate user. ${error.message}`);
       });
   };
 
@@ -304,7 +333,10 @@ export default function StudentPage() {
             columns={studentColumns(
               handleEdit,
               openDeleteDialog,
-              openResetDialog
+              openResetDialog,
+              openActivateDialog,
+              openInfoDialog,
+              currentRole
             )}
             totalRows={totalRows} // Total number of records for pagination
             pageSize={pageSize} // Current page size
@@ -349,21 +381,49 @@ export default function StudentPage() {
       {/* confirm popup for Delete */}
       <ConfirmationPopup
         open={isDeleteDialogOpen}
-        handleClose={() => setIsDeleteDialogOpen(false)}
+        handleClose={() => {
+          setIdToDelete(null), setIsDeleteDialogOpen(false);
+        }}
         handleDelete={() => handleConfirmDelete(idToDelete)}
         msg={
           "Are you sure you want to delete this student? This action cannot be undone."
         }
-        btnValue={loading ? "Deleting" : "Delete"}
+        btnValue={loading ? "Deleting..." : "Delete"}
+        heading={"Confirm Delete"}
       />
 
       {/* confirm popup for Reset Password */}
       <ConfirmationPopup
         open={isResetDialogOpen}
-        handleClose={() => setIsResetDialogOpen(false)}
+        handleClose={() => {
+          setIdToReset(null), setIsResetDialogOpen(false);
+        }}
         handleDelete={() => handleConfirmReset(idToReset)}
         msg={"Are you sure you want to Reset the Password to 'Welcome@123' ?."}
-        btnValue={loading ? "Reseting" : "Reset"}
+        btnValue={loading ? "Reseting..." : "Reset"}
+        heading={"Confirm Password Reset"}
+      />
+
+      {/* confirmation popup for the  activating student */}
+      <ConfirmationPopup
+        open={isActivateDialogOpen}
+        handleClose={() => {
+          setIdToActivate(null), setIsActivateDialogOpen(false);
+        }}
+        handleDelete={() => handleConfirmActivate(idToActivate)}
+        msg={"Are you sure you want to make this Student Active ?. "}
+        btnValue={loading ? "Activating..." : "Activate"}
+        heading={"Confirm Activation"}
+      />
+
+      {/* { information dailog for deleted students} */}
+      <InfoPopup
+        open={isInfoDialogOpen}
+        handleClose={() => {
+          setIsInfoDialogOpen(false);
+        }}
+        msg={"Please Contact Super Admin to Activate this Student ... "}
+        heading={"Contact Information"}
       />
     </Box>
   );

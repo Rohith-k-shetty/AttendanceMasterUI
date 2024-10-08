@@ -101,6 +101,27 @@ const resetUserPasswordInDB = async (token, id) => {
   }
 };
 
+const activateUserInDB = async (token, id) => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/users/activate/${id}`,
+      {}, // An empty object as the body if no data is required
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error while Activating user:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+
 export const saveUserDeatils = async (token, body) => {
   const user = await upadateUserDetailsToDB(token, body);
   return user;
@@ -123,5 +144,10 @@ export const deleteUserDeatil = async (token, id) => {
 
 export const resetUserPassword = async (token, id) => {
   const user = await resetUserPasswordInDB(token, id);
+  return user;
+};
+
+export const activateUserDetail = async (token, id) => {
+  const user = await activateUserInDB(token, id);
   return user;
 };

@@ -8,14 +8,7 @@ import {
   Button,
 } from "@mui/material";
 
-function ConfirmationPopup({
-  open,
-  handleClose,
-  handleDelete,
-  msg,
-  btnValue,
-  heading,
-}) {
+function InfoPopup({ open, handleClose, msg, heading }) {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>{heading}</DialogTitle>
@@ -31,20 +24,12 @@ function ConfirmationPopup({
         <DialogContentText>{msg}</DialogContentText>
       </DialogContent>
       <DialogActions sx={{ pb: 3, px: 3 }}>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={(id) => {
-            handleDelete(id);
-            handleClose();
-          }}
-        >
-          {btnValue}
+        <Button variant="contained" color="primary" onClick={handleClose}>
+          OK
         </Button>
       </DialogActions>
     </Dialog>
   );
 }
 
-export default ConfirmationPopup;
+export default InfoPopup;

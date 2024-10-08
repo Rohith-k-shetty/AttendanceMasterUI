@@ -4,6 +4,7 @@ import {
   updateUserDeatil,
   deleteUserDeatil,
   resetUserPassword,
+  activateUserDetail,
 } from "../../services/userService";
 
 export const saveUser = createAsyncThunk(
@@ -57,6 +58,20 @@ export const resetUser = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to delete user"
+      );
+    }
+  }
+);
+
+export const activateUser = createAsyncThunk(
+  "update/activateUser",
+  async ({ token, id }, thunkAPI) => {
+    try {
+      const response = await activateUserDetail(token, id);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Failed to activate user"
       );
     }
   }
@@ -134,6 +149,21 @@ const userSlice = createSlice({
         state.success = true;
       })
       .addCase(resetUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      //activate user
+      .addCase(activateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(activateUser.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(activateUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
