@@ -1,7 +1,11 @@
-import { renderEditDeleteActions } from "../pages/TablePage";
+import RenderButtons from "../components/buttons/RenderButton";
 import { renderAvatar, renderStatus } from "./functions";
 
-export const studentColumns = (handleEdit, handleDelete) => [
+export const studentColumns = (
+  handleEdit,
+  handleDelete,
+  handlePasswordReset
+) => [
   {
     field: "avatar",
     headerName: "Avatar",
@@ -72,10 +76,16 @@ export const studentColumns = (handleEdit, handleDelete) => [
     field: "actions",
     headerName: "Actions",
     flex: 1,
-    minWidth: 120,
+    minWidth: 150,
     headerAlign: "center",
-    align: "right",
-    renderCell: (params) =>
-      renderEditDeleteActions(params, handleEdit, handleDelete),
+    align: "center",
+    renderCell: (params) => (
+      <RenderButtons
+        params={params} // Pass params correctly
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        handlePasswordReset={handlePasswordReset}
+      />
+    ),
   },
 ];

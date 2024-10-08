@@ -89,7 +89,12 @@ export function renderEditButton(params, handleEdit) {
   );
 }
 
-export function renderEditDeleteActions(params, handleEdit, handleDelete) {
+export function renderEditDeleteActions(
+  params,
+  handleEdit,
+  handleDelete,
+  handlePasswordReset
+) {
   return (
     <Box
       display="flex"
@@ -99,6 +104,8 @@ export function renderEditDeleteActions(params, handleEdit, handleDelete) {
       {renderEditButton(params, handleEdit)}
       <Box sx={{ mx: 0.5 }} /> {/* Spacer between buttons */}
       {renderDeleteButton(params, handleDelete)}
+      <Box sx={{ mx: 0.5 }} />
+      {renderResetButton(params, handlePasswordReset)}
     </Box>
   );
 }

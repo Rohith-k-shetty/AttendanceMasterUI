@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import React from "react";
 import { TittleCard } from "../components/TittleCard";
 import { useEffect, useState } from "react";
 import { DynamicFilter } from "../components/DynamicFilter";
@@ -32,12 +31,16 @@ import {
 } from "../features/users/userTableSelector";
 import { mapStudentsToFields } from "../utils/functions";
 import UserTable from "../components/tables/userTable";
-import { studentColumns } from "../utils/studentColums";
 import NoDataFound from "../components/buttons/NoDataFound";
 import UserAddDrawer from "../components/drawer/UserAddDrawer";
 import UserEditDrawer from "../components/drawer/UserEditDrawer";
 import { getUser } from "../features/users/getUserSlice";
 import { selectgetUserData } from "../features/users/getUserSelector";
+import { studentColumns } from "../utils/studentColums";
+import ConfirmationPopup from "../components/buttons/ConfirmationPopup";
+import { deleteUser, resetUser } from "../features/users/userSlice";
+import toast from "react-hot-toast";
+import { selectUserLoading } from "../features/users/userSelectors";
 
 export default function StudentPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -103,7 +106,11 @@ export default function StudentPage() {
   const [pageNo, setPageNo] = useState(0); // Current page
   const [pageSize, setPageSize] = useState(10); // Page size
   const totalRows = useSelector(selectUserTableTotalCount);
-
+  const [idToDelete, setIdToDelete] = useState(null);
+  const [idToReset, setIdToReset] = useState(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const loading = useSelector(selectUserLoading);
   // Handle change for dropdowns
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -212,9 +219,37 @@ export default function StudentPage() {
     setEditDrawerOpen(true);
   };
 
-  const handleDelete = (id) => {
-    console.log(`Delete row with id: ${id}`);
-    // Add your delete logic here
+  //delete and edit popup functions
+  const openDeleteDialog = (id) => {
+    setIdToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const openResetDialog = (id) => {
+    setIdToReset(id);
+    setIsResetDialogOpen(true);
+  };
+
+  const handleConfirmDelete = (idToDelete) => {
+    dispatch(deleteUser({ token, id: idToDelete }))
+      .unwrap()
+      .then(() => {
+        toast.success(`Successfully deleted user.`);
+      })
+      .catch((error) => {
+        toast.error(`Failed to delete user. ${error.message}`);
+      });
+  };
+
+  const handleConfirmReset = (idToReset) => {
+    dispatch(resetUser({ token, id: idToReset }))
+      .unwrap()
+      .then(() => {
+        toast.success(`Successfully reset password for user.`);
+      })
+      .catch((error) => {
+        toast.error(`Failed to reset password for user. ${error.message}`);
+      });
   };
 
   return (
@@ -266,7 +301,11 @@ export default function StudentPage() {
         ) : (
           <UserTable
             rows={mappedUsers}
-            columns={studentColumns(handleEdit, handleDelete)}
+            columns={studentColumns(
+              handleEdit,
+              openDeleteDialog,
+              openResetDialog
+            )}
             totalRows={totalRows} // Total number of records for pagination
             pageSize={pageSize} // Current page size
             currentPage={pageNo} // Current page number
@@ -305,6 +344,26 @@ export default function StudentPage() {
         courses={courses}
         token={token}
         user={user}
+      />
+
+      {/* confirm popup for Delete */}
+      <ConfirmationPopup
+        open={isDeleteDialogOpen}
+        handleClose={() => setIsDeleteDialogOpen(false)}
+        handleDelete={() => handleConfirmDelete(idToDelete)}
+        msg={
+          "Are you sure you want to delete this student? This action cannot be undone."
+        }
+        btnValue={loading ? "Deleting" : "Delete"}
+      />
+
+      {/* confirm popup for Reset Password */}
+      <ConfirmationPopup
+        open={isResetDialogOpen}
+        handleClose={() => setIsResetDialogOpen(false)}
+        handleDelete={() => handleConfirmReset(idToReset)}
+        msg={"Are you sure you want to Reset the Password to 'Welcome@123' ?."}
+        btnValue={loading ? "Reseting" : "Reset"}
       />
     </Box>
   );

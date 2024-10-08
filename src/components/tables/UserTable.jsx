@@ -41,7 +41,7 @@ const UserTable = ({
               paginationModel: { pageSize: pageSize, page: currentPage },
             },
           }}
-          pageSizeOptions={[10, 20, 50]}
+          pageSizeOptions={[10, 20, 40]}
           disableColumnResize
           density="compact"
           rowHeight={64}

@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { saveUserDeatils, updateUserDeatil } from "../../services/userService";
+import {
+  saveUserDeatils,
+  updateUserDeatil,
+  deleteUserDeatil,
+  resetUserPassword,
+} from "../../services/userService";
 
 export const saveUser = createAsyncThunk(
   "post/saveUser",
@@ -24,6 +29,34 @@ export const editUser = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to update user"
+      );
+    }
+  }
+);
+
+export const deleteUser = createAsyncThunk(
+  "delete/deleteUser",
+  async ({ token, id }, thunkAPI) => {
+    try {
+      const response = await deleteUserDeatil(token, id);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Failed to delete user"
+      );
+    }
+  }
+);
+
+export const resetUser = createAsyncThunk(
+  "update/resetUser",
+  async ({ token, id }, thunkAPI) => {
+    try {
+      const response = await resetUserPassword(token, id);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Failed to delete user"
       );
     }
   }
@@ -71,6 +104,36 @@ const userSlice = createSlice({
         state.success = true;
       })
       .addCase(editUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Save User Actions
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(deleteUser.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      //reset user Addcase
+      .addCase(resetUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(resetUser.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(resetUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

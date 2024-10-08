@@ -62,6 +62,45 @@ const getUserById = async (token, id) => {
   }
 };
 
+// Function to make a delete user
+const deleteUserFromDB = async (token, id) => {
+  try {
+    const response = await axios.delete(`${API_URL}/users/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error while deleting user:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+
+const resetUserPasswordInDB = async (token, id) => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/users/reset-password/${id}`,
+      {}, // An empty object as the body if no data is required
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error while resetting user password:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+
 export const saveUserDeatils = async (token, body) => {
   const user = await upadateUserDetailsToDB(token, body);
   return user;
@@ -74,5 +113,15 @@ export const updateUserDeatil = async (token, body) => {
 
 export const geteditUserById = async (token, id) => {
   const user = await getUserById(token, id);
+  return user;
+};
+
+export const deleteUserDeatil = async (token, id) => {
+  const user = await deleteUserFromDB(token, id);
+  return user;
+};
+
+export const resetUserPassword = async (token, id) => {
+  const user = await resetUserPasswordInDB(token, id);
   return user;
 };
