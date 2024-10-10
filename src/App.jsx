@@ -17,6 +17,7 @@ import {
 import AppRoutes from "./routes/AppRoutes"; // Import your routes
 import SignIn from "./pages/sign-in/SignIn";
 import { getFromLocalStorage } from "./utils/storage";
+import { Toaster } from "react-hot-toast";
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -36,6 +37,7 @@ function App(props) {
     <AppTheme {...props} themeComponents={xThemeComponents}>
       <CssBaseline enableColorScheme />
       <Router>
+        <Toaster />
         {isAuthenticated ? (
           <Box sx={{ display: "flex" }}>
             <SideMenu />

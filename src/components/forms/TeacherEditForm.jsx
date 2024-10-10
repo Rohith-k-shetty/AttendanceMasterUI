@@ -1,6 +1,13 @@
-import { TextField, MenuItem, Grid } from "@mui/material";
 /* eslint-disable react/prop-types */
-export function AdminForm({ formData, handleChange, errors, departments }) {
+import { TextField, MenuItem, Grid } from "@mui/material";
+
+// TeacherEditForm Component
+export function TeacherEditForm({
+  formData,
+  handleChange,
+  errors,
+  departments,
+}) {
   const genderOptions = [
     { name: "Male" },
     { name: "Female" },
@@ -37,11 +44,11 @@ export function AdminForm({ formData, handleChange, errors, departments }) {
       </Grid>
       <Grid item xs={6}>
         <TextField
-          label="Password"
+          label="New Password"
           name="password"
           type="password"
           variant="outlined"
-          value={formData.password}
+          value={formData.password} // Allow users to change password
           onChange={handleChange}
           error={!!errors.password}
           helperText={errors.password}

@@ -1,6 +1,7 @@
 import { TextField, MenuItem, Grid } from "@mui/material";
 /* eslint-disable react/prop-types */
-export function AdminForm({ formData, handleChange, errors, departments }) {
+
+export function AdminEditForm({ formData, handleChange, errors, departments }) {
   const genderOptions = [
     { name: "Male" },
     { name: "Female" },
@@ -35,13 +36,14 @@ export function AdminForm({ formData, handleChange, errors, departments }) {
           sx={{ mb: 2 }}
         />
       </Grid>
+      {/* Password field could be optional for editing */}
       <Grid item xs={6}>
         <TextField
-          label="Password"
+          label="New Password"
           name="password"
           type="password"
           variant="outlined"
-          value={formData.password}
+          value={formData.password} // Consider clearing this field when editing
           onChange={handleChange}
           error={!!errors.password}
           helperText={errors.password}

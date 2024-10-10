@@ -1,6 +1,13 @@
 import { TextField, MenuItem, Grid } from "@mui/material";
-/* eslint-disable react/prop-types */
-export function AdminForm({ formData, handleChange, errors, departments }) {
+import React from "react";
+
+export function StudentEditForm({
+  formData,
+  handleChange,
+  errors,
+  years,
+  courses,
+}) {
   const genderOptions = [
     { name: "Male" },
     { name: "Female" },
@@ -9,6 +16,7 @@ export function AdminForm({ formData, handleChange, errors, departments }) {
 
   return (
     <Grid container spacing={2}>
+      {/* Name Field */}
       <Grid item xs={6}>
         <TextField
           label="Name"
@@ -19,9 +27,12 @@ export function AdminForm({ formData, handleChange, errors, departments }) {
           error={!!errors.name}
           helperText={errors.name}
           fullWidth
-          sx={{ mb: 2 }} // Margin between fields
+          sx={{ mb: 2 }}
+          autoComplete="name"
         />
       </Grid>
+
+      {/* Username Field */}
       <Grid item xs={6}>
         <TextField
           label="Username"
@@ -32,39 +43,12 @@ export function AdminForm({ formData, handleChange, errors, departments }) {
           error={!!errors.username}
           helperText={errors.username}
           fullWidth
+          autoComplete="username"
           sx={{ mb: 2 }}
         />
       </Grid>
-      <Grid item xs={6}>
-        <TextField
-          label="Password"
-          name="password"
-          type="password"
-          variant="outlined"
-          value={formData.password}
-          onChange={handleChange}
-          error={!!errors.password}
-          helperText={errors.password}
-          fullWidth
-          sx={{ mb: 2 }}
-          autoComplete="new-password"
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
-          label="Confirm Password"
-          name="confirmPassword"
-          type="password"
-          variant="outlined"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          error={!!errors.confirmPassword}
-          helperText={errors.confirmPassword}
-          fullWidth
-          sx={{ mb: 2 }}
-          autoComplete="new-password"
-        />
-      </Grid>
+
+      {/* Email Field */}
       <Grid item xs={6}>
         <TextField
           label="Email"
@@ -79,6 +63,8 @@ export function AdminForm({ formData, handleChange, errors, departments }) {
           sx={{ mb: 2 }}
         />
       </Grid>
+
+      {/* Gender Field */}
       <Grid item xs={6}>
         <TextField
           label="Gender"
@@ -99,34 +85,94 @@ export function AdminForm({ formData, handleChange, errors, departments }) {
           ))}
         </TextField>
       </Grid>
+
+      {/* Course Field */}
       <Grid item xs={6}>
         <TextField
-          label="Department"
-          name="departmentId"
+          label="Course"
+          name="courseId"
           select
           variant="outlined"
-          value={formData.departmentId}
+          value={formData.courseId}
           onChange={handleChange}
-          error={!!errors.departmentId}
-          helperText={errors.departmentId}
+          error={!!errors.courseId}
+          helperText={errors.courseId}
           fullWidth
           sx={{ mb: 2 }}
         >
-          {departments.map((dept) => (
-            <MenuItem key={dept.id} value={dept.id}>
-              {dept.name}
+          {courses.map((c) => (
+            <MenuItem key={c.id} value={c.id}>
+              {c.courseName}
             </MenuItem>
           ))}
         </TextField>
       </Grid>
+
+      {/* Year Field */}
       <Grid item xs={6}>
         <TextField
-          label="Phone No."
+          label="Year"
+          name="yearId"
+          select
+          variant="outlined"
+          value={formData.yearId}
+          onChange={handleChange}
+          error={!!errors.yearId}
+          helperText={errors.yearId}
+          fullWidth
+          sx={{ mb: 2 }}
+        >
+          {years.map((year) => (
+            <MenuItem key={year.id} value={year.id}>
+              {year.year}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+
+      {/* Phone Field */}
+      <Grid item xs={6}>
+        <TextField
+          label="Phone"
           name="phoneNo"
-          type="number"
           variant="outlined"
           value={formData.phoneNo}
           onChange={handleChange}
+          error={!!errors.phoneNo}
+          helperText={errors.phoneNo}
+          fullWidth
+          type="number"
+          sx={{ mb: 2 }}
+        />
+      </Grid>
+
+      {/* Parent Phone Field */}
+      <Grid item xs={6}>
+        <TextField
+          label="Parent Phone"
+          name="parentPhone"
+          variant="outlined"
+          value={formData.parentPhone}
+          onChange={handleChange}
+          error={!!errors.parentPhone}
+          helperText={errors.parentPhone}
+          fullWidth
+          type="number"
+          sx={{ mb: 2 }}
+        />
+      </Grid>
+
+      {/* Parent Email Field */}
+      <Grid item xs={6}>
+        <TextField
+          label="Parent Email"
+          name="parentEmail"
+          type="email"
+          variant="outlined"
+          value={formData.parentEmail}
+          onChange={handleChange}
+          error={!!errors.parentEmail}
+          helperText={errors.parentEmail}
           fullWidth
           sx={{ mb: 2 }}
         />

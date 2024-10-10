@@ -89,16 +89,23 @@ export function renderEditButton(params, handleEdit) {
   );
 }
 
-export function renderEditDeleteActions(params, handleEdit, handleDelete) {
+export function renderEditDeleteActions(
+  params,
+  handleEdit,
+  handleDelete,
+  handlePasswordReset
+) {
   return (
     <Box
       display="flex"
       alignItems="center" // Center buttons vertically
-      sx={{ height: "100%" }} // Make sure Box takes full height
+      sx={{ height: "100%", marginLeft: "20px" }} // Make sure Box takes full height
     >
       {renderEditButton(params, handleEdit)}
       <Box sx={{ mx: 0.5 }} /> {/* Spacer between buttons */}
       {renderDeleteButton(params, handleDelete)}
+      <Box sx={{ mx: 0.5 }} />
+      {renderResetButton(params, handlePasswordReset)}
     </Box>
   );
 }
@@ -106,8 +113,6 @@ export function renderEditDeleteActions(params, handleEdit, handleDelete) {
 // Function to render the status chip
 function renderStatus(status) {
   const colors = {
-    Online: "success",
-    Offline: "default",
     Active: "success",
     Inactive: "default",
   };
@@ -196,11 +201,11 @@ export default function TablePage() {
   const fetchData = (page, size) => {
     const startIndex = page * size;
     const endIndex = startIndex + size;
-    setRows(dummyData.slice(startIndex, endIndex)); // Slice the dummy data for the current page
+    setRows(dummyData.slice(startIndex, endIndex));
   };
 
   useEffect(() => {
-    fetchData(currentPage, pageSize); // Fetch data on component mount and when pagination changes
+    fetchData(currentPage, pageSize);
   }, [currentPage, pageSize]);
 
   return (
@@ -224,22 +229,22 @@ export default function TablePage() {
           }
           pagination
           pageSize={pageSize}
-          rowCount={totalRows} // Total number of rows from dummy data
+          rowCount={totalRows}
           onPaginationModelChange={({ pageSize, page }) => {
             setPageSize(pageSize);
-            setCurrentPage(page); // Update current page
+            setCurrentPage(page);
           }}
-          paginationMode="server" // Enable server-side pagination
+          paginationMode="server"
           initialState={{
-            pagination: { paginationModel: { pageSize: 10, page: 0 } }, // Default to first page
+            pagination: { paginationModel: { pageSize: 10, page: 0 } },
           }}
-          pageSizeOptions={[10, 20, 50]} // Options for page size
+          pageSizeOptions={[10, 20, 50]}
           disableColumnResize
-          density="compact" // Change density to make rows smaller
-          rowHeight={64} // Set a smaller row height (default is ~52)
+          density="compact"
+          rowHeight={64}
           sx={{
             "& .MuiDataGrid-row": {
-              minHeight: "48px", // Adjust the minimum height for rows if necessary
+              minHeight: "48px",
             },
           }}
         />

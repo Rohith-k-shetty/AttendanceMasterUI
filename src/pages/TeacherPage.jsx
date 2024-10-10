@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
 import CustomizedDataGrid from "../components/CustomizedDataGrid";
-import AdminDrawer from "../components/AdminDrawer";
 import { columns, rows } from "../internals/data/gridData";
 import { TittleCard } from "../components/TittleCard";
 import rolePageMapping from "../utils/rolePageMapping";
 import { DynamicFilter } from "../components/DynamicFilter";
+import UserAddDrawer from "../components/drawer/UserAddDrawer";
 
 export default function StudentPage() {
   const [filterRows, setFilterRows] = useState(rows);
@@ -131,7 +131,7 @@ export default function StudentPage() {
       </Box>
 
       {/* Drawer for Adding Admin */}
-      <AdminDrawer
+      <UserAddDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         role={"Teacher"}

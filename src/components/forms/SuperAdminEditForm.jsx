@@ -1,6 +1,8 @@
-import { TextField, MenuItem, Grid } from "@mui/material";
 /* eslint-disable react/prop-types */
-export function AdminForm({ formData, handleChange, errors, departments }) {
+import { TextField, MenuItem, Grid } from "@mui/material";
+
+// SuperAdminEditForm Component
+export function SuperAdminEditForm({ formData, handleChange, errors }) {
   const genderOptions = [
     { name: "Male" },
     { name: "Female" },
@@ -35,13 +37,14 @@ export function AdminForm({ formData, handleChange, errors, departments }) {
           sx={{ mb: 2 }}
         />
       </Grid>
+      {/* Password fields can be optional or maintained as is */}
       <Grid item xs={6}>
         <TextField
-          label="Password"
+          label="New Password"
           name="password"
           type="password"
           variant="outlined"
-          value={formData.password}
+          value={formData.password} // Clear this field when editing
           onChange={handleChange}
           error={!!errors.password}
           helperText={errors.password}
@@ -101,30 +104,10 @@ export function AdminForm({ formData, handleChange, errors, departments }) {
       </Grid>
       <Grid item xs={6}>
         <TextField
-          label="Department"
-          name="departmentId"
-          select
-          variant="outlined"
-          value={formData.departmentId}
-          onChange={handleChange}
-          error={!!errors.departmentId}
-          helperText={errors.departmentId}
-          fullWidth
-          sx={{ mb: 2 }}
-        >
-          {departments.map((dept) => (
-            <MenuItem key={dept.id} value={dept.id}>
-              {dept.name}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
-          label="Phone No."
+          label="Phone"
           name="phoneNo"
-          type="number"
           variant="outlined"
+          type="number"
           value={formData.phoneNo}
           onChange={handleChange}
           fullWidth
