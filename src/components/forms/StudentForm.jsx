@@ -152,6 +152,7 @@ export function StudentForm({
         <TextField
           label="Phone"
           name="phoneNo"
+          type="number"
           variant="outlined"
           value={formData.phoneNo}
           onChange={handleChange}
@@ -163,6 +164,7 @@ export function StudentForm({
         <TextField
           label="Parent Phone"
           name="parentPhone"
+          type="number"
           variant="outlined"
           value={formData.parentPhone}
           onChange={handleChange}

@@ -141,6 +141,7 @@ export function StudentEditForm({
           error={!!errors.phoneNo}
           helperText={errors.phoneNo}
           fullWidth
+          type="number"
           sx={{ mb: 2 }}
         />
       </Grid>
@@ -156,6 +157,7 @@ export function StudentEditForm({
           error={!!errors.parentPhone}
           helperText={errors.parentPhone}
           fullWidth
+          type="number"
           sx={{ mb: 2 }}
         />
       </Grid>

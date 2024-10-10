@@ -46,18 +46,42 @@ import {
 import toast from "react-hot-toast";
 import { selectUserLoading } from "../features/users/userSelectors";
 import InfoPopup from "../components/buttons/InfoPopup";
+import { statusOptions } from "../utils/constants";
+import { debounce, throttle } from "lodash";
+import { useMemo } from "react";
 
 export default function StudentPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedCourse, setselectedCourse] = useState("");
-
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [userId, setUserId] = useState("");
-  // const user = useSelector((state) => state.auth.user);
+  const [mappedUsers, setMappedUsers] = useState([]);
+  const [pageNo, setPageNo] = useState(0); // Current page
+  const [pageSize, setPageSize] = useState(10); // Page size
+  const [idToDelete, setIdToDelete] = useState(null);
+  const [idToReset, setIdToReset] = useState(null);
+  const [idToActivate, setIdToActivate] = useState(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const [isActivateDialogOpen, setIsActivateDialogOpen] = useState(false);
+  const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
+
+  //selectors
+  const dispatch = useDispatch();
+  const departments = useSelector(selectDepartments);
+  const courses = useSelector(selectCourses);
+  const years = useSelector(selectYears);
+  const usersDblist = useSelector(selectUserTableData);
+  const user = useSelector(selectgetUserData);
+  const totalRows = useSelector(selectUserTableTotalCount);
+  const users = useSelector(selectSearchUsers);
+  const searchLoading = useSelector(selectSearchLoading);
+
+  const token = getFromLocalStorage("authToken");
 
   // dynamic filgter part
   const currentRole = "SuperAdmin";
@@ -66,26 +90,14 @@ export default function StudentPage() {
     rolePageMapping[currentRole].pages.find((page) => page.page === currentPage)
       ?.requiredFilters || [];
 
-  const dispatch = useDispatch();
-
-  // Using selectors to fetch data from Redux store
-  const departments = useSelector(selectDepartments);
-  const courses = useSelector(selectCourses);
-  const years = useSelector(selectYears);
-
-  const token = getFromLocalStorage("authToken");
-
   useEffect(() => {
     dispatch(getDepartments(token));
     dispatch(getCourses(token));
     dispatch(getYears(token));
   }, [dispatch]);
 
-  const users = useSelector(selectSearchUsers);
-  const searchLoading = useSelector(selectSearchLoading);
-
   const handleInputChange = useCallback(
-    (event, newInputValue) => {
+    debounce((event, newInputValue) => {
       if (newInputValue.length >= 4) {
         dispatch(
           searchUsers({
@@ -96,32 +108,13 @@ export default function StudentPage() {
       } else {
         dispatch(clearSearch());
       }
-    },
+    }, 300),
     [dispatch, token]
   );
 
-  const statusOptions = [
-    { value: "Active", label: "Active" },
-    { value: "Deleted", label: "Deleted" },
-  ];
-
-  const usersDblist = useSelector(selectUserTableData);
-  const user = useSelector(selectgetUserData);
-  const [mappedUsers, setMappedUsers] = useState([]);
-  const [pageNo, setPageNo] = useState(0); // Current page
-  const [pageSize, setPageSize] = useState(10); // Page size
-  const totalRows = useSelector(selectUserTableTotalCount);
-  const [idToDelete, setIdToDelete] = useState(null);
-  const [idToReset, setIdToReset] = useState(null);
-  const [idToActivate, setIdToActivate] = useState(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
-  const [isActivateDialogOpen, setIsActivateDialogOpen] = useState(false);
-  const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
-
   const loading = useSelector(selectUserLoading);
   // Handle change for dropdowns
-  const handleChange = (event) => {
+  const handleChange = useCallback((event) => {
     const { name, value } = event.target;
     switch (name) {
       case "department":
@@ -136,10 +129,6 @@ export default function StudentPage() {
         setSelectedYear(value);
         setPageNo(0);
         break;
-      case "user":
-        setSelectedUser(value);
-        setPageNo(0);
-        break;
       case "status":
         setSelectedStatus(value);
         setPageNo(0);
@@ -147,7 +136,7 @@ export default function StudentPage() {
       default:
         break;
     }
-  };
+  }, []);
 
   const handleSelectSearch = useCallback(
     (newValue) => {
@@ -184,9 +173,16 @@ export default function StudentPage() {
     ]
   );
 
+  const throttledFetchUsers = useCallback(
+    throttle((page, pageSize) => {
+      fetchUsers(page, pageSize);
+    }, 500),
+    [fetchUsers]
+  );
+
   useEffect(() => {
-    fetchUsers(pageNo, pageSize);
-  }, [fetchUsers, pageNo, pageSize]);
+    throttledFetchUsers(pageNo, pageSize);
+  }, [throttledFetchUsers, pageNo, pageSize]);
 
   const handleReset = useCallback(() => {
     // Reset filters
@@ -213,15 +209,33 @@ export default function StudentPage() {
     fetchUsers(0, pageSize); // Fetch users after search
   }, [fetchUsers, pageSize]);
 
-  // Map and store the data in local state once the usersDblist changes
-  useEffect(() => {
+  // Memoize the result of mapStudentsToFields
+  const memoizedUsers = useMemo(() => {
     if (usersDblist && usersDblist.length > 0) {
-      const mappedData = mapStudentsToFields(usersDblist); // Mapping function
-      setMappedUsers(mappedData);
+      return mapStudentsToFields(usersDblist);
     } else {
-      setMappedUsers([]);
+      return [];
     }
   }, [usersDblist]);
+
+  // Update the state when memoizedUsers changes
+  useEffect(() => {
+    setMappedUsers(memoizedUsers);
+  }, [memoizedUsers]);
+
+  // Updated onPaginationChange to use throttledFetchUsers
+  const onPaginationChange = useCallback(
+    ({ pageSize: newPageSize, page: newPage }) => {
+      if (newPageSize !== pageSize) {
+        setPageSize(newPageSize); // Only update when page size changes
+        throttledFetchUsers(0, newPageSize); // Fetch first page of new page size
+      } else {
+        setPageNo(newPage); // Update current page without resetting
+        throttledFetchUsers(newPage, pageSize); // Fetch users for new page
+      }
+    },
+    [throttledFetchUsers, pageSize]
+  );
 
   const handleEdit = (id) => {
     dispatch(getUser({ token, id }));
@@ -341,16 +355,7 @@ export default function StudentPage() {
             totalRows={totalRows} // Total number of records for pagination
             pageSize={pageSize} // Current page size
             currentPage={pageNo} // Current page number
-            onPaginationChange={({ pageSize: newPageSize, page: newPage }) => {
-              if (newPageSize !== pageSize) {
-                setPageSize(newPageSize); // Update page size
-                setPageNo(0); // Reset to the first page when the page size changes
-                fetchUsers(0, newPageSize); // Fetch users for the first page with the new page size
-              } else {
-                setPageNo(newPage); // Update current page
-                fetchUsers(newPage, pageSize); // Fetch users for the current page
-              }
-            }}
+            onPaginationChange={onPaginationChange}
           />
         )}
       </Box>

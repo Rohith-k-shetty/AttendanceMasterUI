@@ -32,6 +32,7 @@ export default function UserEditDrawer({
   years,
   courses,
   token,
+  userRole,
 }) {
   const dispatch = useDispatch();
   const loading = useSelector(selectUserLoading);
@@ -172,6 +173,13 @@ export default function UserEditDrawer({
           setErrors({ yearId: "Year is required" });
           return false;
         }
+        if (formData.parentEmail !== "") {
+          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailPattern.test(formData.parentEmail)) {
+            setErrors({ email: "Invalid email address" });
+            return false;
+          }
+        }
         break;
       default:
         break;
@@ -180,9 +188,9 @@ export default function UserEditDrawer({
     return true;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (id) => {
     if (validateForm()) {
-      dispatch(editUser({ token, body: formData }))
+      dispatch(editUser({ token, id, body: formData }))
         .unwrap()
         .then(() => {
           onClose();
@@ -298,10 +306,10 @@ export default function UserEditDrawer({
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleSubmit}
+                onClick={() => handleSubmit(user.id)}
                 disabled={loading}
               >
-                {loading ? "Saving..." : "Save"}
+                {loading ? "Updating..." : "Update"}
               </Button>
               <Button variant="outlined" onClick={handleReset}>
                 Reset

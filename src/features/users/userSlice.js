@@ -22,10 +22,10 @@ export const saveUser = createAsyncThunk(
 );
 
 export const editUser = createAsyncThunk(
-  "post/editUser",
-  async ({ token, body }, thunkAPI) => {
+  "put/editUser",
+  async ({ token, id, body }, thunkAPI) => {
     try {
-      const response = await updateUserDeatil(token, body);
+      const response = await updateUserDeatil(token, id, body);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(

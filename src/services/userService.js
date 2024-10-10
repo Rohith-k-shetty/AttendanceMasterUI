@@ -3,11 +3,18 @@ import axios from "axios";
 // Define the base URL for your API
 const API_URL = "http://localhost:3001/api";
 
-const saveUserDetailsToDB = async (token, body) => {
+const saveUserDetailsToDB = async (token, id, body) => {
   try {
-    const response = await axios.post(
-      `${API_URL}/users`, // API endpoint
-      body,
+    // Filter out fields with empty string or undefined values
+    const filteredBody = Object.fromEntries(
+      Object.entries(body).filter(
+        ([_, value]) => value !== "" && value !== undefined
+      )
+    );
+
+    const response = await axios.put(
+      `${API_URL}/users/${id}`, // API endpoint
+      filteredBody, // Use filtered body
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -17,12 +24,13 @@ const saveUserDetailsToDB = async (token, body) => {
     return response.data; // Return the response data
   } catch (error) {
     console.error(
-      "Error while saving user:",
+      "Error while updating user:",
       error.response ? error.response.data : error.message
     );
-    throw error; // Re-throw the error to be handled by the calling function
+    throw error;
   }
 };
+
 // Function to make a POST request with a token
 const upadateUserDetailsToDB = async (token, body) => {
   try {
@@ -127,8 +135,8 @@ export const saveUserDeatils = async (token, body) => {
   return user;
 };
 
-export const updateUserDeatil = async (token, body) => {
-  const user = await saveUserDetailsToDB(token, body);
+export const updateUserDeatil = async (token, id, body) => {
+  const user = await saveUserDetailsToDB(token, id, body);
   return user;
 };
 

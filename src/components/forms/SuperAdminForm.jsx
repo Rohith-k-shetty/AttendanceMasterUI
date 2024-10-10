@@ -105,6 +105,7 @@ export function SuperAdminForm({ formData, handleChange, errors }) {
         <TextField
           label="Phone"
           name="phoneNo"
+          type="number"
           variant="outlined"
           value={formData.phoneNo}
           onChange={handleChange}

@@ -130,6 +130,7 @@ export function TeacherEditForm({
         <TextField
           label="Phone No."
           name="phoneNo"
+          type="number"
           variant="outlined"
           value={formData.phoneNo}
           onChange={handleChange}

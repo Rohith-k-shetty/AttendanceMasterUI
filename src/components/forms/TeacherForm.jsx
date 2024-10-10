@@ -124,6 +124,7 @@ export function TeacherForm({ formData, handleChange, errors, departments }) {
         <TextField
           label="Phone No."
           name="phoneNo"
+          type="number"
           variant="outlined"
           value={formData.phoneNo}
           onChange={handleChange}

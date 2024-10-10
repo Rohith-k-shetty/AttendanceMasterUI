@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import PropTypes from "prop-types";
 
 const UserTable = ({
   rows,
@@ -60,6 +61,16 @@ const UserTable = ({
       </Box>
     </Box>
   );
+};
+
+// PropTypes for better validation and documentation
+UserTable.propTypes = {
+  rows: PropTypes.array.isRequired,
+  columns: PropTypes.array.isRequired,
+  totalRows: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  currentPage: PropTypes.number.isRequired,
+  onPaginationChange: PropTypes.func.isRequired,
 };
 
 export default UserTable;

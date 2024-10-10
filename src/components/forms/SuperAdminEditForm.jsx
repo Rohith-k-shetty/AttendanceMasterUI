@@ -107,6 +107,7 @@ export function SuperAdminEditForm({ formData, handleChange, errors }) {
           label="Phone"
           name="phoneNo"
           variant="outlined"
+          type="number"
           value={formData.phoneNo}
           onChange={handleChange}
           fullWidth

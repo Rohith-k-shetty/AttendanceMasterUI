@@ -1,6 +1,6 @@
 import React from "react";
 import { IconButton, Tooltip } from "@mui/material";
-import AddReactionIcon from "@mui/icons-material/AddReaction"; // You can change the icon if needed
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts"; // You can change the icon if needed
 
 const ActivateButton = ({ params, handleActivate }) => {
   return (
@@ -17,7 +17,7 @@ const ActivateButton = ({ params, handleActivate }) => {
           borderRadius: "50%", // Make the button round
         }}
       >
-        <AddReactionIcon sx={{ color: "white" }} fontSize="small" />
+        <ManageAccountsIcon sx={{ color: "white" }} fontSize="small" />
       </IconButton>
     </Tooltip>
   );
