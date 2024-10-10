@@ -115,7 +115,7 @@ export function TeacherForm({ formData, handleChange, errors, departments }) {
         >
           {departments.map((dept) => (
             <MenuItem key={dept.id} value={dept.id}>
-              {dept.name}
+              {dept.departmentCode}
             </MenuItem>
           ))}
         </TextField>

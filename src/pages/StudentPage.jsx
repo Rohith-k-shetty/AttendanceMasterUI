@@ -36,7 +36,7 @@ import UserAddDrawer from "../components/drawer/UserAddDrawer";
 import UserEditDrawer from "../components/drawer/UserEditDrawer";
 import { getUser } from "../features/users/getUserSlice";
 import { selectgetUserData } from "../features/users/getUserSelector";
-import { studentColumns } from "../utils/studentColums";
+import { studentColumns } from "../utils/colums/studentColums";
 import ConfirmationPopup from "../components/buttons/ConfirmationPopup";
 import {
   activateUser,
@@ -266,6 +266,7 @@ export default function StudentPage() {
     dispatch(deleteUser({ token, id: idToDelete }))
       .unwrap()
       .then(() => {
+        throttledFetchUsers(pageNo, pageSize);
         toast.success(`Successfully deleted user.`);
       })
       .catch((error) => {
@@ -277,6 +278,7 @@ export default function StudentPage() {
     dispatch(resetUser({ token, id: idToReset }))
       .unwrap()
       .then(() => {
+        throttledFetchUsers(pageNo, pageSize);
         toast.success(`Successfully reset password for user.`);
       })
       .catch((error) => {
@@ -288,6 +290,7 @@ export default function StudentPage() {
     dispatch(activateUser({ token, id: idToActivate }))
       .unwrap()
       .then(() => {
+        throttledFetchUsers(pageNo, pageSize);
         toast.success(`Successfully Activated user.`);
       })
       .catch((error) => {
@@ -369,6 +372,7 @@ export default function StudentPage() {
         years={years}
         courses={courses}
         token={token}
+        fetchUsers={() => throttledFetchUsers(pageNo, pageSize)}
       />
 
       {/* Drawer for editing student */}
@@ -381,6 +385,7 @@ export default function StudentPage() {
         courses={courses}
         token={token}
         user={user}
+        fetchUsers={() => throttledFetchUsers(pageNo, pageSize)}
       />
 
       {/* confirm popup for Delete */}

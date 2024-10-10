@@ -22,6 +22,7 @@ import { resetUserState, editUser } from "../../features/users/userSlice";
 import { TeacherEditForm } from "../forms/TeacherEditForm";
 import { AdminEditForm } from "../forms/AdminEditForm";
 import { SuperAdminEditForm } from "../forms/SuperAdminEditForm";
+import toast from "react-hot-toast";
 
 export default function UserEditDrawer({
   open,
@@ -33,6 +34,7 @@ export default function UserEditDrawer({
   courses,
   token,
   userRole,
+  fetchUsers,
 }) {
   const dispatch = useDispatch();
   const loading = useSelector(selectUserLoading);
@@ -193,8 +195,10 @@ export default function UserEditDrawer({
       dispatch(editUser({ token, id, body: formData }))
         .unwrap()
         .then(() => {
-          onClose();
           handleReset();
+          fetchUsers();
+          onClose();
+          toast.success(`${role} details updated Successfully.`);
         })
         .catch((error) => {
           console.error("Failed to edit user:", error);

@@ -21,6 +21,7 @@ import {
 } from "../../features/users/userSelectors";
 import { useDispatch, useSelector } from "react-redux";
 import { resetUserState, saveUser } from "../../features/users/userSlice";
+import toast from "react-hot-toast";
 
 export default function UserAddDrawer({
   open,
@@ -30,6 +31,7 @@ export default function UserAddDrawer({
   years,
   courses,
   token,
+  fetchUsers,
 }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -178,8 +180,10 @@ export default function UserAddDrawer({
       dispatch(saveUser({ token, body: formData }))
         .unwrap()
         .then(() => {
-          onClose();
           handleReset();
+          fetchUsers();
+          onClose();
+          toast.success(`${role} details Successfully added.`);
         })
         .catch((error) => {
           console.error("Failed to save user:", error);

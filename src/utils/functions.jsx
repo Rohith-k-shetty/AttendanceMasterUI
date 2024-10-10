@@ -54,3 +54,25 @@ export const mapStudentsToFields = (studentArray) => {
     phone: student.phoneNo || "N/A",
   }));
 };
+
+export const mapTeachersToFields = (teacherArray) => {
+  return teacherArray.map((teacher) => ({
+    id: teacher.id,
+    avatar: {
+      name: teacher.name,
+      color:
+        teacher.gender == "Male"
+          ? "#3f51b5"
+          : teacher.gender == "Female"
+          ? "#f50057"
+          : "#f50057",
+    },
+    username: teacher.username,
+    name: teacher.name,
+    department: teacher.department ? teacher.department.departmentCode : "",
+    email: teacher.email ? teacher.email : "",
+    gender: teacher.gender || "N/A",
+    status: teacher.status,
+    phone: teacher.phoneNo || "N/A",
+  }));
+};
