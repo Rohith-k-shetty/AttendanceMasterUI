@@ -16,7 +16,8 @@ import {
 } from "./theme/customizations";
 import AppRoutes from "./routes/AppRoutes"; // Import your routes
 import SignIn from "./pages/sign-in/SignIn";
-import { getFromLocalStorage } from "./utils/storage";
+import { getFromLocalStorage, clearLocalStorage } from "./utils/storage";
+import { decodeToken } from "./utils/auth"; // Token decoder function
 import { Toaster } from "react-hot-toast";
 
 const xThemeComponents = {
@@ -28,11 +29,47 @@ const xThemeComponents = {
 
 function App(props) {
   const [isAuthenticated, setIsAuthenticated] = React.useState(
-    !!getFromLocalStorage("authToken")
+    !!(getFromLocalStorage("authToken") && getFromLocalStorage("user"))
   );
+
+  // Handle login state after successful login
   const handleLogin = () => {
     setIsAuthenticated(true);
+    checkTokenExpiry();
   };
+
+  // Function to handle automatic logout when token expires
+  const setLogoutTimer = (timeRemaining) => {
+    setTimeout(() => {
+      clearLocalStorage();
+      setIsAuthenticated(false);
+    }, timeRemaining);
+  };
+
+  // Function to check if the token is expired on initial load
+  const checkTokenExpiry = () => {
+    const token = getFromLocalStorage("authToken");
+    if (token) {
+      const decodedToken = decodeToken(token);
+      const expiryTime = decodedToken.exp * 1000;
+
+      if (Date.now() > expiryTime) {
+        // If token has already expired, clear localStorage and redirect to login
+        clearLocalStorage();
+        setIsAuthenticated(false);
+      } else {
+        // If token is still valid, set a timer to auto logout
+        const timeRemaining = expiryTime - Date.now();
+        setLogoutTimer(timeRemaining);
+      }
+    }
+  };
+
+  // Check token expiry on initial app load inside a useEffect hook
+  React.useEffect(() => {
+    checkTokenExpiry();
+  }, []);
+
   return (
     <AppTheme {...props} themeComponents={xThemeComponents}>
       <CssBaseline enableColorScheme />

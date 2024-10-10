@@ -22,3 +22,7 @@ export const removeFromLocalStorage = (key) => {
     console.error("Error removing from localStorage", error);
   }
 };
+
+export const clearLocalStorage = () => {
+  localStorage.clear();
+};
