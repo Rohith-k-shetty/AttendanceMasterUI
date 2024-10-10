@@ -139,8 +139,8 @@ export default function UserAddDrawer({
     }
     switch (role) {
       case "Admin":
-        if (!formData.departmentId) {
-          setErrors({ departmentId: "Department is required" });
+        if (!formData.courseId) {
+          setErrors({ courseId: "Department is required" });
           return false;
         }
         break;
@@ -208,7 +208,7 @@ export default function UserAddDrawer({
             formData={formData}
             handleChange={handleChange}
             errors={errors}
-            departments={departments}
+            courses={courses}
           />
         );
       case "Teacher":

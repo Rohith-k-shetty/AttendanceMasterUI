@@ -223,6 +223,7 @@ export default function UserEditDrawer({
             handleChange={handleChange}
             errors={errors}
             departments={departments}
+            courses={courses}
           />
         );
       case "Teacher":

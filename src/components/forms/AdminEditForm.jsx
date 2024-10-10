@@ -1,7 +1,7 @@
 import { TextField, MenuItem, Grid } from "@mui/material";
 /* eslint-disable react/prop-types */
 
-export function AdminEditForm({ formData, handleChange, errors, departments }) {
+export function AdminEditForm({ formData, handleChange, errors, courses }) {
   const genderOptions = [
     { name: "Male" },
     { name: "Female" },
@@ -103,20 +103,20 @@ export function AdminEditForm({ formData, handleChange, errors, departments }) {
       </Grid>
       <Grid item xs={6}>
         <TextField
-          label="Department"
-          name="departmentId"
+          label="Course"
+          name="courseId"
           select
           variant="outlined"
-          value={formData.departmentId}
+          value={formData.courseId}
           onChange={handleChange}
-          error={!!errors.departmentId}
-          helperText={errors.departmentId}
+          error={!!errors.courseId}
+          helperText={errors.courseId}
           fullWidth
           sx={{ mb: 2 }}
         >
-          {departments.map((dept) => (
-            <MenuItem key={dept.id} value={dept.id}>
-              {dept.name}
+          {courses.map((c) => (
+            <MenuItem key={c.id} value={c.id}>
+              {c.courseCode}
             </MenuItem>
           ))}
         </TextField>

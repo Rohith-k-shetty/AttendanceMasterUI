@@ -36,7 +36,6 @@ import UserAddDrawer from "../components/drawer/UserAddDrawer";
 import UserEditDrawer from "../components/drawer/UserEditDrawer";
 import { getUser } from "../features/users/getUserSlice";
 import { selectgetUserData } from "../features/users/getUserSelector";
-import { studentColumns } from "../utils/colums/studentColums";
 import ConfirmationPopup from "../components/buttons/ConfirmationPopup";
 import {
   activateUser,
@@ -49,6 +48,7 @@ import InfoPopup from "../components/buttons/InfoPopup";
 import { statusOptions } from "../utils/constants";
 import { debounce, throttle } from "lodash";
 import { useMemo } from "react";
+import { studentColumns } from "../utils/colums/studentColums";
 
 export default function StudentPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);

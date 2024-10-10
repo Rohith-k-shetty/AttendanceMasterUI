@@ -44,36 +44,6 @@ export function TeacherEditForm({
       </Grid>
       <Grid item xs={6}>
         <TextField
-          label="New Password"
-          name="password"
-          type="password"
-          variant="outlined"
-          value={formData.password} // Allow users to change password
-          onChange={handleChange}
-          error={!!errors.password}
-          helperText={errors.password}
-          fullWidth
-          sx={{ mb: 2 }}
-          autoComplete="new-password"
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
-          label="Confirm Password"
-          name="confirmPassword"
-          type="password"
-          variant="outlined"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          error={!!errors.confirmPassword}
-          helperText={errors.confirmPassword}
-          fullWidth
-          sx={{ mb: 2 }}
-          autoComplete="new-password"
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
           label="Email"
           name="email"
           type="email"
@@ -121,7 +91,7 @@ export function TeacherEditForm({
         >
           {departments.map((dept) => (
             <MenuItem key={dept.id} value={dept.id}>
-              {dept.name}
+              {dept.departmentCode}
             </MenuItem>
           ))}
         </TextField>

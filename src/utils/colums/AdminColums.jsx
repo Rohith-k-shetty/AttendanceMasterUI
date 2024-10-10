@@ -1,12 +1,12 @@
 import RenderButtons from "../../components/buttons/RenderButton";
 import { renderAvatar, renderStatus } from "../functions";
 
-export const studentColumns = (
+export const adminColumns = (
   handleEdit,
   handleDelete,
   handlePasswordReset,
   handleActivate,
-  handleInfo, // added handleInfo
+  handleInfo,
   userRole
 ) => {
   const actionsColumn = {
@@ -17,8 +17,7 @@ export const studentColumns = (
     headerAlign: "center",
     align: "center",
     renderCell: (params) => {
-      const { status } = params.row; // Extracting the user's status
-
+      const { status } = params.row;
       // Logic to determine which buttons to show for Deleted users
       if (status === "Deleted") {
         return (
@@ -31,22 +30,13 @@ export const studentColumns = (
           />
         );
       }
-      // Show all buttons for non-deleted users
       return (
         <RenderButtons
           params={params}
-          handleEdit={
-            userRole === "SuperAdmin" ||
-            userRole === "Admin" ||
-            userRole === "Teacher"
-              ? handleEdit
-              : undefined
-          }
+          handleEdit={userRole === "SuperAdmin" ? handleEdit : undefined}
           handleDelete={userRole === "SuperAdmin" ? handleDelete : undefined}
           handlePasswordReset={
-            userRole === "SuperAdmin" || userRole === "Admin"
-              ? handlePasswordReset
-              : undefined
+            userRole === "SuperAdmin" ? handlePasswordReset : undefined
           }
         />
       );
@@ -88,12 +78,12 @@ export const studentColumns = (
       minWidth: 120,
     },
     {
-      field: "year",
-      headerName: "Year",
+      field: "email",
+      headerName: "Email",
       headerAlign: "center",
       align: "center",
       flex: 1,
-      minWidth: 80,
+      minWidth: 150,
     },
     {
       field: "gender",
@@ -118,8 +108,8 @@ export const studentColumns = (
       headerAlign: "center",
       align: "center",
       flex: 1,
-      minWidth: 80,
+      minWidth: 100,
     },
-    userRole !== "Student" && actionsColumn,
+    userRole === "SuperAdmin" && actionsColumn,
   ];
 };

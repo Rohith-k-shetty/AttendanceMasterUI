@@ -29,7 +29,7 @@ import {
   selectUserTableData,
   selectUserTableTotalCount,
 } from "../features/users/userTableSelector";
-import { mapTeachersToFields } from "../utils/functions";
+import { mapAdminsToFields, mapTeachersToFields } from "../utils/functions";
 import UserTable from "../components/tables/userTable";
 import NoDataFound from "../components/buttons/NoDataFound";
 import UserAddDrawer from "../components/drawer/UserAddDrawer";
@@ -49,6 +49,7 @@ import InfoPopup from "../components/buttons/InfoPopup";
 import { statusOptions } from "../utils/constants";
 import { debounce, throttle } from "lodash";
 import { useMemo } from "react";
+import { adminColumns } from "../utils/colums/AdminColums";
 
 export default function AdminPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -102,7 +103,7 @@ export default function AdminPage() {
         dispatch(
           searchUsers({
             token,
-            query: { searchTerm: newInputValue, role: "Teacher" },
+            query: { searchTerm: newInputValue, role: "Admin" },
           })
         );
       } else {
@@ -117,8 +118,8 @@ export default function AdminPage() {
   const handleChange = useCallback((event) => {
     const { name, value } = event.target;
     switch (name) {
-      case "department":
-        setSelectedDepartment(value);
+      case "course":
+        setselectedCourse(value);
         setPageNo(0);
         break;
       case "year":
@@ -151,7 +152,7 @@ export default function AdminPage() {
         status: selectedStatus || "",
         yearId: selectedYear || "",
         userId: userId || "",
-        role: "Teacher",
+        role: "Admin",
         offset: page * limit,
         limit,
       };
@@ -208,7 +209,7 @@ export default function AdminPage() {
   // Memoize the result of mapStudentsToFields
   const memoizedUsers = useMemo(() => {
     if (usersDblist && usersDblist.length > 0) {
-      return mapTeachersToFields(usersDblist);
+      return mapAdminsToFields(usersDblist);
     } else {
       return [];
     }
@@ -305,8 +306,8 @@ export default function AdminPage() {
       }}
     >
       <TittleCard
-        tittle={"Manage Teachers"}
-        button={"Add Teacher"}
+        tittle={"Manage Admin"}
+        button={"Add Admin"}
         buttonAction={() => {
           setDrawerOpen(true);
         }}
@@ -338,12 +339,12 @@ export default function AdminPage() {
       <Box sx={{ flexGrow: 1, overflow: "auto" }}>
         {mappedTeachers.length === 0 ? (
           <Box sx={{ textAlign: "center", p: 2 }}>
-            <NoDataFound message="No student record found" />
+            <NoDataFound message="No admin record found" />
           </Box>
         ) : (
           <UserTable
             rows={mappedTeachers}
-            columns={TeacherColumns(
+            columns={adminColumns(
               handleEdit,
               openDeleteDialog,
               openResetDialog,
@@ -351,8 +352,8 @@ export default function AdminPage() {
               openInfoDialog,
               currentRole
             )}
-            totalRows={totalRows} // Total number of records for pagination
-            pageSize={pageSize} // Current page size
+            totalRows={totalRows}
+            pageSize={pageSize}
             currentPage={pageNo} // Current page number
             onPaginationChange={onPaginationChange}
           />
@@ -363,7 +364,7 @@ export default function AdminPage() {
       <UserAddDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        role={"Teacher"}
+        role={"Admin"}
         departments={departments}
         years={years}
         courses={courses}
@@ -375,7 +376,7 @@ export default function AdminPage() {
       <UserEditDrawer
         open={editDrawerOpen}
         onClose={() => setEditDrawerOpen(false)}
-        role={"Teacher"}
+        role={"Admin"}
         departments={departments}
         years={years}
         courses={courses}

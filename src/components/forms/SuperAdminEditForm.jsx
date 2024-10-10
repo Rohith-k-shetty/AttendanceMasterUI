@@ -37,37 +37,6 @@ export function SuperAdminEditForm({ formData, handleChange, errors }) {
           sx={{ mb: 2 }}
         />
       </Grid>
-      {/* Password fields can be optional or maintained as is */}
-      <Grid item xs={6}>
-        <TextField
-          label="New Password"
-          name="password"
-          type="password"
-          variant="outlined"
-          value={formData.password} // Clear this field when editing
-          onChange={handleChange}
-          error={!!errors.password}
-          helperText={errors.password}
-          fullWidth
-          sx={{ mb: 2 }}
-          autoComplete="new-password"
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
-          label="Confirm Password"
-          name="confirmPassword"
-          type="password"
-          variant="outlined"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          error={!!errors.confirmPassword}
-          helperText={errors.confirmPassword}
-          fullWidth
-          sx={{ mb: 2 }}
-          autoComplete="new-password"
-        />
-      </Grid>
       <Grid item xs={6}>
         <TextField
           label="Email"
