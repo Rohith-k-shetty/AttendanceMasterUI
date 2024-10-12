@@ -10,7 +10,7 @@ import {
   Grid,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { SuperAdminForm } from "../forms/superAdminForm";
+import { SuperAdminForm } from "../forms/SuperAdminForm";
 import { AdminForm } from "../forms/AdminForm";
 import { TeacherForm } from "../forms/TeacherForm";
 import { StudentForm } from "../forms/StudentForm";

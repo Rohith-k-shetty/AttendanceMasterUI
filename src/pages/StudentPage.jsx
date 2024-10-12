@@ -30,7 +30,7 @@ import {
   selectUserTableTotalCount,
 } from "../features/users/userTableSelector";
 import { mapStudentsToFields } from "../utils/functions";
-import UserTable from "../components/tables/userTable";
+import UserTable from "../components/tables/UserTable";
 import NoDataFound from "../components/buttons/NoDataFound";
 import UserAddDrawer from "../components/drawer/UserAddDrawer";
 import UserEditDrawer from "../components/drawer/UserEditDrawer";
