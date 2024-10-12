@@ -7,10 +7,14 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
 import Collapse from "@mui/material/Collapse";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { ExpandLess, ExpandMore, Height } from "@mui/icons-material";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import PeopleRoundedIcon from "@mui/icons-material/PeopleRounded";
 import AssignmentRoundedIcon from "@mui/icons-material/AssignmentRounded";
+import SubjectIcon from "@mui/icons-material/Subject";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 
 const menuItems = [
   {
@@ -20,7 +24,7 @@ const menuItems = [
     children: [], // No children for Home
   },
   {
-    text: "table",
+    text: "Table",
     icon: <HomeRoundedIcon />,
     path: "/table", // Route for Home
     children: [], // No children for Home
@@ -48,6 +52,24 @@ const menuItems = [
         path: "/users/student",
       },
     ],
+  },
+  {
+    text: "Departments",
+    icon: <AssessmentIcon />,
+    path: "/departments", // Route for Home
+    children: [], // No children for Home
+  },
+  {
+    text: "Subjects",
+    icon: <SubjectIcon />,
+    path: "/subjects", // Route for Home
+    children: [], // No children for Home
+  },
+  {
+    text: "Courses",
+    icon: <AssignmentIcon />,
+    path: "/courses", // Route for Home
+    children: [], // No children for Home
   },
   {
     text: "Attendance Book",
@@ -90,7 +112,7 @@ export default function MenuContent() {
                 }
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
+                <ListItemText primary={item.text} sx={{ fontSize: 100 }} />
                 {item.children.length > 0 ? (
                   openIndex === index ? (
                     <ExpandLess />

@@ -49,8 +49,9 @@ import { statusOptions } from "../utils/constants";
 import { debounce, throttle } from "lodash";
 import { useMemo } from "react";
 import { superAdminColumns } from "../utils/colums/SuperAdminColumns";
+import AddVerticalDrawer from "../components/drawer/AddVerticalDrawer";
 
-export default function AdminPage() {
+export default function DepartmentPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState("");
@@ -86,7 +87,7 @@ export default function AdminPage() {
 
   // dynamic filgter part
   const currentRole = "SuperAdmin";
-  const currentPage = "SuperAdminPage";
+  const currentPage = "DepartmentPage";
   const requiredFilters =
     rolePageMapping[currentRole].pages.find((page) => page.page === currentPage)
       ?.requiredFilters || [];
@@ -305,15 +306,15 @@ export default function AdminPage() {
       }}
     >
       <TittleCard
-        tittle={"Manage SuperAdmins"}
-        button={"Add SuperAdmin"}
+        tittle={"Manage Departments"}
+        button={"Add Department"}
         buttonAction={() => {
           setDrawerOpen(true);
         }}
       />
 
       {/* Dynamic Filter Section */}
-      <DynamicFilter
+      {/* <DynamicFilter
         departments={departments}
         years={years}
         courses={courses}
@@ -332,7 +333,7 @@ export default function AdminPage() {
         requiredFilters={requiredFilters}
         handleInputChange={handleInputChange}
         loading={searchLoading}
-      />
+      /> */}
 
       {/* Data Table Section */}
       <Box sx={{ flexGrow: 1, overflow: "auto" }}>
@@ -359,8 +360,13 @@ export default function AdminPage() {
         )}
       </Box>
 
+      <AddVerticalDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        type={"Department"}
+      />
       {/* Drawer for Adding Admin */}
-      <UserAddDrawer
+      {/* <UserAddDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         role={"SuperAdmin"}
@@ -369,10 +375,10 @@ export default function AdminPage() {
         courses={courses}
         token={token}
         fetchUsers={() => throttledFetchUsers(pageNo, pageSize)}
-      />
+      /> */}
 
       {/* Drawer for editing student */}
-      <UserEditDrawer
+      {/* <UserEditDrawer
         open={editDrawerOpen}
         onClose={() => setEditDrawerOpen(false)}
         role={"SuperAdmin"}
@@ -382,7 +388,7 @@ export default function AdminPage() {
         token={token}
         user={user}
         fetchUsers={() => throttledFetchUsers(pageNo, pageSize)}
-      />
+      /> */}
 
       {/* confirm popup for Delete */}
       <ConfirmationPopup

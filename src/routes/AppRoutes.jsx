@@ -6,6 +6,9 @@ import TeacherPage from "../pages/TeacherPage";
 import StudentPage from "../pages/StudentPage";
 import TablePage from "../pages/TablePage";
 import SignIn from "../pages/sign-in/SignIn";
+import DepartmentPage from "../pages/DepartmentPage";
+import CoursePage from "../pages/CoursePage";
+import SubjectPage from "../pages/SubjectPage";
 
 const AppRoutes = ({ isAuthenticated }) => {
   return (
@@ -33,6 +36,20 @@ const AppRoutes = ({ isAuthenticated }) => {
       <Route
         path="/table"
         element={isAuthenticated ? <TablePage /> : <Navigate to="/sign-in" />}
+      />
+      <Route
+        path="/departments"
+        element={
+          isAuthenticated ? <DepartmentPage /> : <Navigate to="/sign-in" />
+        }
+      />
+      <Route
+        path="/courses"
+        element={isAuthenticated ? <CoursePage /> : <Navigate to="/sign-in" />}
+      />
+      <Route
+        path="/subjects"
+        element={isAuthenticated ? <SubjectPage /> : <Navigate to="/sign-in" />}
       />
       <Route path="/sign-in" element={<SignIn />} />
     </Routes>

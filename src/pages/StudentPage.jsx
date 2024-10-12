@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { TittleCard } from "../components/TittleCard";
 import { useEffect, useState } from "react";
-import { DynamicFilter } from "../components/DynamicFilter";
+import { DynamicFilter } from "../components/search/DynamicFilter";
 import rolePageMapping from "../utils/rolePageMapping";
 import { useDispatch, useSelector } from "react-redux";
 import {
