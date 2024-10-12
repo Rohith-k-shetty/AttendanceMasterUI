@@ -1,0 +1,25 @@
+import {
+  defaultTheme_default,
+  identifier_default
+} from "./chunk-Z2V24GCO.js";
+import {
+  useThemeProps
+} from "./chunk-JSXDBQCN.js";
+
+// node_modules/@mui/material/styles/useThemeProps.js
+function useThemeProps2({
+  props,
+  name
+}) {
+  return useThemeProps({
+    props,
+    name,
+    defaultTheme: defaultTheme_default,
+    themeId: identifier_default
+  });
+}
+
+export {
+  useThemeProps2 as useThemeProps
+};
+//# sourceMappingURL=chunk-LV4FTLQY.js.map
