@@ -35,7 +35,6 @@ export const getYears = createAsyncThunk(
     }
   }
 );
-
 export const getCourses = createAsyncThunk(
   "vertical/getCourses",
   async (token, thunkAPI) => {

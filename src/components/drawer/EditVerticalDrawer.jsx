@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Drawer,
   Box,
@@ -18,13 +18,14 @@ import SubjectIcon from "@mui/icons-material/Subject";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import toast from "react-hot-toast";
-import { saveVertical } from "../../features/vertical/modifyVerticalSlice";
+import { updateVertical } from "../../features/vertical/modifyVerticalSlice"; // Action for updating verticals
 
-export default function AddVerticalDrawer({
+export default function EditVerticalDrawer({
   open,
   onClose,
   type,
   token,
+  initialData,
   fetchVerticals,
 }) {
   const [formData, setFormData] = useState({
@@ -38,10 +39,23 @@ export default function AddVerticalDrawer({
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
 
+  // Populate form data when initialData is passed (edit mode)
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        subjectName: initialData.subjectName || "",
+        subjectCode: initialData.subjectCode || "",
+        departmentName: initialData.departmentName || "",
+        departmentCode: initialData.departmentCode || "",
+        courseName: initialData.courseName || "",
+        courseCode: initialData.courseCode || "",
+      });
+    }
+  }, [initialData]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Update form data
     setFormData({
       ...formData,
       [name]: value,
@@ -106,43 +120,43 @@ export default function AddVerticalDrawer({
     return true;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (id) => {
     if (validateForm()) {
-      let newformdata;
+      let updatedData;
       switch (type) {
         case "Subject":
-          newformdata = {
+          updatedData = {
             subjectName: formData.subjectName,
             subjectCode: formData.subjectCode,
           };
           break;
         case "Department":
-          newformdata = {
+          updatedData = {
             departmentName: formData.departmentName,
             departmentCode: formData.departmentCode,
           };
           break;
         case "Course":
-          newformdata = {
-            courseName: formData.departmentName,
-            courseCode: formData.departmentCode,
+          updatedData = {
+            courseName: formData.courseName,
+            courseCode: formData.courseCode,
           };
           break;
         default:
           return;
       }
 
-      dispatch(saveVertical({ token, body: newformdata, type }))
+      dispatch(updateVertical({ token, id, body: updatedData, type }))
         .unwrap()
         .then(() => {
           handleReset();
           fetchVerticals();
           onClose();
-          toast.success(`${type} added successfully.`);
+          toast.success(`${type} updated successfully.`);
         })
         .catch((error) => {
-          console.error(`Failed to save: ${type}.`, error);
-          toast.error(`Failed to save: ${type}.`);
+          console.error(`Failed to update: ${type}.`, error);
+          toast.error(`Failed to update: ${type}.`);
         });
     }
   };
@@ -205,6 +219,7 @@ export default function AddVerticalDrawer({
 
   const error = false;
   const loading = false;
+
   return (
     <Drawer
       anchor="right"
@@ -228,7 +243,7 @@ export default function AddVerticalDrawer({
         }}
       >
         <Typography variant="h6" align="center">
-          Add New Department
+          Edit {type}
         </Typography>
         <IconButton
           onClick={onClose}
@@ -245,7 +260,6 @@ export default function AddVerticalDrawer({
 
       {/* Center the form */}
       <Box
-        component="form"
         sx={{
           width: "100%",
           display: "flex",
@@ -287,10 +301,10 @@ export default function AddVerticalDrawer({
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleSubmit}
+                onClick={() => handleSubmit(initialData.id)}
                 disabled={loading}
               >
-                {loading ? "Saving..." : "Save"}
+                {loading ? "Updating..." : "Update"}
               </Button>
               <Button variant="outlined" onClick={handleReset}>
                 Reset

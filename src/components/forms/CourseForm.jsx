@@ -32,11 +32,6 @@ export function CourseForm({ formData, handleChange, handleSubmit, errors }) {
             sx={{ mb: 2 }}
           />
         </Grid>
-        <Grid item xs={12}>
-          <Button type="submit" variant="contained" color="primary">
-            Add Course
-          </Button>
-        </Grid>
       </Grid>
     </form>
   );

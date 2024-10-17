@@ -196,15 +196,15 @@ export default function AdminPage() {
     // Reset pagination state and fetch the first page
     setPageNo(0); // Reset the current page to 0
     setPageSize(10); // Reset to the default page size
-    fetchUsers(0, 10); // Fetch users for the first page with the default page size
-  }, [fetchUsers, dispatch]);
+    throttledFetchUsers(pageNo, pageSize); // Fetch users for the first page with the default page size
+  }, [dispatch, throttledFetchUsers, pageNo, pageSize]);
 
   // Updated handleSearch to fetch users after resetting to the first page
   const handleSearch = useCallback(() => {
     setmappedTeachers([]);
     setPageNo(0); // Reset to the first page
-    fetchUsers(0, pageSize); // Fetch users after search
-  }, [fetchUsers, pageSize]);
+    throttledFetchUsers(pageNo, pageSize); // Fetch users after search
+  }, [throttledFetchUsers, pageNo, pageSize]);
 
   // Memoize the result of mapStudentsToFields
   const memoizedUsers = useMemo(() => {

@@ -63,7 +63,7 @@ const getUserById = async (token, id) => {
     return response.data;
   } catch (error) {
     console.error(
-      "Error while saving user:",
+      "Error while getting user details:",
       error.response ? error.response.data : error.message
     );
     throw error;

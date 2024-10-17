@@ -60,15 +60,15 @@ const menuItems = [
     children: [], // No children for Home
   },
   {
-    text: "Subjects",
-    icon: <SubjectIcon />,
-    path: "/subjects", // Route for Home
-    children: [], // No children for Home
-  },
-  {
     text: "Courses",
     icon: <AssignmentIcon />,
     path: "/courses", // Route for Home
+    children: [], // No children for Home
+  },
+  {
+    text: "Subjects",
+    icon: <SubjectIcon />,
+    path: "/subjects", // Route for Home
     children: [], // No children for Home
   },
   {
