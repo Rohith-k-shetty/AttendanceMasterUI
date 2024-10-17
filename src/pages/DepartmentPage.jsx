@@ -36,6 +36,7 @@ import { selectgetDepartmentData } from "../features/vertical/getDepartmentSelec
 import {
   activateVertical,
   deleteVertical,
+  resetModifyVerticalState,
 } from "../features/vertical/modifyVerticalSlice";
 import { getDepartment } from "../features/vertical/getDepartmentSlice";
 import { selectModifyVerticalLoading } from "../features/vertical/modifyVerticalSelectors";
@@ -291,7 +292,9 @@ export default function DepartmentPage() {
 
       <AddVerticalDrawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={() => {
+          setDrawerOpen(false), dispatch(resetModifyVerticalState());
+        }}
         type={verticalType}
         token={token}
         fetchVerticals={() => throttledFetchVerticals(pageNo, pageSize)}
@@ -300,7 +303,9 @@ export default function DepartmentPage() {
       <EditVerticalDrawer
         open={editDrawerOpen}
         initialData={verticalData}
-        onClose={() => setEditDrawerOpen(false)}
+        onClose={() => {
+          setEditDrawerOpen(false), dispatch(resetModifyVerticalState());
+        }}
         type={verticalType}
         token={token}
         fetchVerticals={() => throttledFetchVerticals(pageNo, pageSize)}

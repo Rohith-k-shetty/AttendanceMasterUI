@@ -13,12 +13,19 @@ import CloseIcon from "@mui/icons-material/Close";
 import { SubjectForm } from "../forms/SubjectForm";
 import { DepartmentForm } from "../forms/DepartmentForm";
 import { CourseForm } from "../forms/CourseForm";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SubjectIcon from "@mui/icons-material/Subject";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import toast from "react-hot-toast";
-import { saveVertical } from "../../features/vertical/modifyVerticalSlice";
+import {
+  resetModifyVerticalState,
+  saveVertical,
+} from "../../features/vertical/modifyVerticalSlice";
+import {
+  selectModifyVerticalError,
+  selectModifyVerticalLoading,
+} from "../../features/vertical/modifyVerticalSelectors";
 
 export default function AddVerticalDrawer({
   open,
@@ -37,6 +44,8 @@ export default function AddVerticalDrawer({
   });
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
+  const error = useSelector(selectModifyVerticalError);
+  const loading = useSelector(selectModifyVerticalLoading);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,6 +74,7 @@ export default function AddVerticalDrawer({
       courseCode: "",
     });
     setErrors({});
+    dispatch(resetModifyVerticalState());
   };
 
   const validateForm = () => {
@@ -203,8 +213,6 @@ export default function AddVerticalDrawer({
     }
   };
 
-  const error = false;
-  const loading = false;
   return (
     <Drawer
       anchor="right"
@@ -228,7 +236,7 @@ export default function AddVerticalDrawer({
         }}
       >
         <Typography variant="h6" align="center">
-          Add New Department
+          Add New {type}
         </Typography>
         <IconButton
           onClick={onClose}
@@ -244,59 +252,51 @@ export default function AddVerticalDrawer({
       </Box>
 
       {/* Center the form */}
+
       <Box
-        component="form"
         sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center", // Centers the form horizontally
+          width: "90%",
         }}
       >
-        <Box
+        <Grid
+          container
           sx={{
-            width: "90%",
+            display: "flex",
+            justifyContent: "center",
           }}
         >
-          <Grid
-            container
+          {renderFormByType()}
+        </Grid>
+
+        {error && (
+          <Box
             sx={{
               display: "flex",
               justifyContent: "center",
+              mt: 2,
             }}
           >
-            {renderFormByType()}
-          </Grid>
-
-          {error && (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                mt: 2,
-              }}
-            >
-              <Typography color="error" align="center">
-                {error.message}
-              </Typography>
-            </Box>
-          )}
-
-          {/* Centered Save and Reset buttons with margin */}
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-            <Stack direction="row" spacing={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-                disabled={loading}
-              >
-                {loading ? "Saving..." : "Save"}
-              </Button>
-              <Button variant="outlined" onClick={handleReset}>
-                Reset
-              </Button>
-            </Stack>
+            <Typography color="error" align="center">
+              {error.message}
+            </Typography>
           </Box>
+        )}
+
+        {/* Centered Save and Reset buttons with margin */}
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+          <Stack direction="row" spacing={2}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? "Saving..." : "Save"}
+            </Button>
+            <Button variant="outlined" onClick={handleReset}>
+              Reset
+            </Button>
+          </Stack>
         </Box>
       </Box>
     </Drawer>

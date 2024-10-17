@@ -13,12 +13,19 @@ import CloseIcon from "@mui/icons-material/Close";
 import { SubjectForm } from "../forms/SubjectForm";
 import { DepartmentForm } from "../forms/DepartmentForm";
 import { CourseForm } from "../forms/CourseForm";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SubjectIcon from "@mui/icons-material/Subject";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import toast from "react-hot-toast";
-import { updateVertical } from "../../features/vertical/modifyVerticalSlice"; // Action for updating verticals
+import {
+  resetModifyVerticalState,
+  updateVertical,
+} from "../../features/vertical/modifyVerticalSlice"; // Action for updating verticals
+import {
+  selectModifyVerticalError,
+  selectModifyVerticalLoading,
+} from "../../features/vertical/modifyVerticalSelectors";
 
 export default function EditVerticalDrawer({
   open,
@@ -38,7 +45,8 @@ export default function EditVerticalDrawer({
   });
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
-
+  const error = useSelector(selectModifyVerticalError);
+  const loading = useSelector(selectModifyVerticalLoading);
   // Populate form data when initialData is passed (edit mode)
   useEffect(() => {
     if (initialData) {
@@ -79,6 +87,7 @@ export default function EditVerticalDrawer({
       courseCode: "",
     });
     setErrors({});
+    dispatch(resetModifyVerticalState());
   };
 
   const validateForm = () => {
@@ -216,9 +225,6 @@ export default function EditVerticalDrawer({
         return null;
     }
   };
-
-  const error = false;
-  const loading = false;
 
   return (
     <Drawer
