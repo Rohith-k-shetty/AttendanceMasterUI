@@ -3,7 +3,7 @@ import { Box, Card } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 
-const UserTable = ({
+const VerticalTable = ({
   rows,
   columns,
   totalRows,
@@ -66,7 +66,7 @@ const UserTable = ({
 };
 
 // PropTypes for better validation and documentation
-UserTable.propTypes = {
+VerticalTable.propTypes = {
   rows: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   totalRows: PropTypes.number.isRequired,
@@ -75,4 +75,4 @@ UserTable.propTypes = {
   onPaginationChange: PropTypes.func.isRequired,
 };
 
-export default UserTable;
+export default VerticalTable;

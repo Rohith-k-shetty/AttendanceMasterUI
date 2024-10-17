@@ -5,7 +5,14 @@ import searchReducer from "../features/search/searchSlice";
 import userReducer from "../features/users/userSlice";
 import userTableReducer from "../features/users/userTableSlice";
 import getUserReducer from "../features/users/getUserSlice";
-
+import verticalSearchReducer from "../features/search/verticalSearchSlice";
+import modifyVerticalReducer from "../features/vertical/modifyVerticalSlice";
+import departmentTableReducer from "../features/vertical/departmentTableSlice";
+import courseTableReducer from "../features/vertical/courseTableSlice";
+import subjectTableReducer from "../features/vertical/subjectTableSlice";
+import getDepartmentReducer from "../features/vertical/getDepartmentSlice";
+import getCourseReducer from "../features/vertical/getCourseSlice";
+import getSubjectReducer from "../features/vertical/getSubjectSlice";
 const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -14,6 +21,14 @@ const store = configureStore({
     users: userReducer,
     userTable: userTableReducer,
     getUser: getUserReducer,
+    verticalSearch: verticalSearchReducer,
+    modifyVertical: modifyVerticalReducer,
+    departmentTable: departmentTableReducer,
+    courseTable: courseTableReducer,
+    subjectTable: subjectTableReducer,
+    getDepartment: getDepartmentReducer,
+    getCourse: getCourseReducer,
+    getSubject: getSubjectReducer,
   },
 });
 

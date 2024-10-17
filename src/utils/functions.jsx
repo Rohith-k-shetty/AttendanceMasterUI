@@ -119,3 +119,36 @@ export const mapSuperAdminToFields = (adminArray) => {
     phone: admin.phoneNo || "N/A",
   }));
 };
+
+export const mapVerticalsToFields = (verticalArray, type) => {
+  return verticalArray.map((vertical) => ({
+    id: vertical.id,
+    avatar: {
+      name:
+        type === "Department"
+          ? vertical.departmentName
+          : type === "Course"
+          ? vertical.courseName
+          : vertical.subjectName,
+      color:
+        vertical.status == "Active"
+          ? "#3f51b5"
+          : vertical.status == "Deleted"
+          ? "#f50057"
+          : "#f50057",
+    },
+    name:
+      type === "Department"
+        ? vertical.departmentName
+        : type === "Course"
+        ? vertical.courseName
+        : vertical.subjectName,
+    code:
+      type === "Department"
+        ? vertical.departmentCode
+        : type === "Course"
+        ? vertical.courseCode
+        : vertical.subjectCode,
+    status: vertical.status,
+  }));
+};

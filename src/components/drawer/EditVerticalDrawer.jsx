@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Drawer,
   Box,
@@ -20,18 +20,19 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import toast from "react-hot-toast";
 import {
   resetModifyVerticalState,
-  saveVertical,
-} from "../../features/vertical/modifyVerticalSlice";
+  updateVertical,
+} from "../../features/vertical/modifyVerticalSlice"; // Action for updating verticals
 import {
   selectModifyVerticalError,
   selectModifyVerticalLoading,
 } from "../../features/vertical/modifyVerticalSelectors";
 
-export default function AddVerticalDrawer({
+export default function EditVerticalDrawer({
   open,
   onClose,
   type,
   token,
+  initialData,
   fetchVerticals,
 }) {
   const [formData, setFormData] = useState({
@@ -46,11 +47,23 @@ export default function AddVerticalDrawer({
   const dispatch = useDispatch();
   const error = useSelector(selectModifyVerticalError);
   const loading = useSelector(selectModifyVerticalLoading);
+  // Populate form data when initialData is passed (edit mode)
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        subjectName: initialData.subjectName || "",
+        subjectCode: initialData.subjectCode || "",
+        departmentName: initialData.departmentName || "",
+        departmentCode: initialData.departmentCode || "",
+        courseName: initialData.courseName || "",
+        courseCode: initialData.courseCode || "",
+      });
+    }
+  }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Update form data
     setFormData({
       ...formData,
       [name]: value,
@@ -116,43 +129,43 @@ export default function AddVerticalDrawer({
     return true;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (id) => {
     if (validateForm()) {
-      let newformdata;
+      let updatedData;
       switch (type) {
         case "Subject":
-          newformdata = {
+          updatedData = {
             subjectName: formData.subjectName,
             subjectCode: formData.subjectCode,
           };
           break;
         case "Department":
-          newformdata = {
+          updatedData = {
             departmentName: formData.departmentName,
             departmentCode: formData.departmentCode,
           };
           break;
         case "Course":
-          newformdata = {
-            courseName: formData.departmentName,
-            courseCode: formData.departmentCode,
+          updatedData = {
+            courseName: formData.courseName,
+            courseCode: formData.courseCode,
           };
           break;
         default:
           return;
       }
 
-      dispatch(saveVertical({ token, body: newformdata, type }))
+      dispatch(updateVertical({ token, id, body: updatedData, type }))
         .unwrap()
         .then(() => {
           handleReset();
           fetchVerticals();
           onClose();
-          toast.success(`${type} added successfully.`);
+          toast.success(`${type} updated successfully.`);
         })
         .catch((error) => {
-          console.error(`Failed to save: ${type}.`, error);
-          toast.error(`Failed to save: ${type}.`);
+          console.error(`Failed to update: ${type}.`, error);
+          toast.error(`Failed to update: ${type}.`);
         });
     }
   };
@@ -236,7 +249,7 @@ export default function AddVerticalDrawer({
         }}
       >
         <Typography variant="h6" align="center">
-          Add New {type}
+          Edit {type}
         </Typography>
         <IconButton
           onClick={onClose}
@@ -252,51 +265,58 @@ export default function AddVerticalDrawer({
       </Box>
 
       {/* Center the form */}
-
       <Box
         sx={{
-          width: "90%",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center", // Centers the form horizontally
         }}
       >
-        <Grid
-          container
+        <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
+            width: "90%",
           }}
         >
-          {renderFormByType()}
-        </Grid>
-
-        {error && (
-          <Box
+          <Grid
+            container
             sx={{
               display: "flex",
               justifyContent: "center",
-              mt: 2,
             }}
           >
-            <Typography color="error" align="center">
-              {error.message}
-            </Typography>
-          </Box>
-        )}
+            {renderFormByType()}
+          </Grid>
 
-        {/* Centered Save and Reset buttons with margin */}
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          <Stack direction="row" spacing={2}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit}
-              disabled={loading}
+          {error && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                mt: 2,
+              }}
             >
-              {loading ? "Saving..." : "Save"}
-            </Button>
-            <Button variant="outlined" onClick={handleReset}>
-              Reset
-            </Button>
-          </Stack>
+              <Typography color="error" align="center">
+                {error.message}
+              </Typography>
+            </Box>
+          )}
+
+          {/* Centered Save and Reset buttons with margin */}
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleSubmit(initialData.id)}
+                disabled={loading}
+              >
+                {loading ? "Updating..." : "Update"}
+              </Button>
+              <Button variant="outlined" onClick={handleReset}>
+                Reset
+              </Button>
+            </Stack>
+          </Box>
         </Box>
       </Box>
     </Drawer>
