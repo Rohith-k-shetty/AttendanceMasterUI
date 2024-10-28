@@ -1,52 +1,52 @@
 import { Box } from "@mui/material";
-import { TittleCard } from "../components/TittleCard";
+import { TittleCard } from "../../components/TittleCard";
 import { useEffect, useState } from "react";
-import { DynamicFilter } from "../components/search/DynamicFilter";
-import rolePageMapping from "../utils/rolePageMapping";
+import { DynamicFilter } from "../../components/search/DynamicFilter";
+import rolePageMapping from "../../utils/rolePageMapping";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectCourses,
   selectDepartments,
   selectYears,
-} from "../features/vertical/verticalSelectors";
-import { getFromLocalStorage } from "../utils/storage";
+} from "../../features/vertical/verticalSelectors";
+import { getFromLocalStorage } from "../../utils/storage";
 import {
   getCourses,
   getDepartments,
   getYears,
-} from "../features/vertical/verticalSlice";
+} from "../../features/vertical/verticalSlice";
 import {
   selectSearchLoading,
   selectSearchUsers,
-} from "../features/search/searchSelectors";
+} from "../../features/search/searchSelectors";
 import { useCallback } from "react";
-import { clearSearch, searchUsers } from "../features/search/searchSlice";
+import { clearSearch, searchUsers } from "../../features/search/searchSlice";
 import {
   fetchUserList,
   resetUserTableState,
-} from "../features/users/userTableSlice";
+} from "../../features/users/userTableSlice";
 import {
   selectUserTableData,
   selectUserTableTotalCount,
-} from "../features/users/userTableSelector";
-import { mapTeachersToFields } from "../utils/functions";
-import UserTable from "../components/tables/UserTable";
-import NoDataFound from "../components/buttons/NoDataFound";
-import UserAddDrawer from "../components/drawer/UserAddDrawer";
-import UserEditDrawer from "../components/drawer/UserEditDrawer";
-import { getUser } from "../features/users/getUserSlice";
-import { selectgetUserData } from "../features/users/getUserSelector";
-import { TeacherColumns } from "../utils/colums/TeacherColums";
-import ConfirmationPopup from "../components/buttons/ConfirmationPopup";
+} from "../../features/users/userTableSelector";
+import { mapTeachersToFields } from "../../utils/functions";
+import UserTable from "../../components/tables/UserTable";
+import NoDataFound from "../../components/buttons/NoDataFound";
+import UserAddDrawer from "../../components/drawer/UserAddDrawer";
+import UserEditDrawer from "../../components/drawer/UserEditDrawer";
+import { getUser } from "../../features/users/getUserSlice";
+import { selectgetUserData } from "../../features/users/getUserSelector";
+import { TeacherColumns } from "../../utils/colums/TeacherColums";
+import ConfirmationPopup from "../../components/buttons/ConfirmationPopup";
 import {
   activateUser,
   deleteUser,
   resetUser,
-} from "../features/users/userSlice";
+} from "../../features/users/userSlice";
 import toast from "react-hot-toast";
-import { selectUserLoading } from "../features/users/userSelectors";
-import InfoPopup from "../components/buttons/InfoPopup";
-import { statusOptions } from "../utils/constants";
+import { selectUserLoading } from "../../features/users/userSelectors";
+import InfoPopup from "../../components/buttons/InfoPopup";
+import { statusOptions } from "../../utils/constants";
 import { debounce, throttle } from "lodash";
 import { useMemo } from "react";
 
@@ -94,6 +94,7 @@ export default function TeacherPage() {
     dispatch(getDepartments(token));
     dispatch(getCourses(token));
     dispatch(getYears(token));
+    dispatch(resetUserTableState());
   }, [dispatch]);
 
   const handleInputChange = useCallback(

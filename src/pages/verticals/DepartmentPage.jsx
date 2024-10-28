@@ -1,46 +1,47 @@
 import { Box } from "@mui/material";
-import { TittleCard } from "../components/TittleCard";
+import { TittleCard } from "../../components/TittleCard";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getFromLocalStorage } from "../utils/storage";
+import { getFromLocalStorage } from "../../utils/storage";
 import { useCallback } from "react";
-import { mapVerticalsToFields } from "../utils/functions";
-import NoDataFound from "../components/buttons/NoDataFound";
-import ConfirmationPopup from "../components/buttons/ConfirmationPopup";
+import { mapVerticalsToFields } from "../../utils/functions";
+import NoDataFound from "../../components/buttons/NoDataFound";
+import ConfirmationPopup from "../../components/buttons/ConfirmationPopup";
 import toast from "react-hot-toast";
-import { selectUserLoading } from "../features/users/userSelectors";
-import { statusOptions } from "../utils/constants";
+import { statusOptions } from "../../utils/constants";
 import { debounce, throttle } from "lodash";
 import { useMemo } from "react";
-import AddVerticalDrawer from "../components/drawer/AddVerticalDrawer";
-import { VerticalFilter } from "../components/search/VerticalFilter";
+import AddVerticalDrawer from "../../components/drawer/AddVerticalDrawer";
+import { VerticalFilter } from "../../components/search/VerticalFilter";
 import {
   clearVerticalSearch,
   searchVerticals,
-} from "../features/search/verticalSearchSlice";
+} from "../../features/search/verticalSearchSlice";
 import {
   selectSearchVerticals,
   selectVerticalSearchLoading,
-} from "../features/search/verticalSearchSelector";
-import VerticalTable from "../components/tables/VerticalTable";
-import EditVerticalDrawer from "../components/drawer/EditVerticalDrawer";
+} from "../../features/search/verticalSearchSelector";
+import VerticalTable from "../../components/tables/VerticalTable";
+import { departmentColumns } from "../../utils/colums/DepartmentColums";
+import {
+  fetchDepartmentList,
+  resetDepartmentTableState,
+} from "../../features/vertical/departmentTableSlice";
+import {
+  selectDepartmentTableData,
+  selectDepartmentTableTotalCount,
+} from "../../features/vertical/departmentTableSelectors";
+import EditVerticalDrawer from "../../components/drawer/EditVerticalDrawer";
+import { selectgetDepartmentData } from "../../features/vertical/getDepartmentSelectors";
 import {
   activateVertical,
   deleteVertical,
-} from "../features/vertical/modifyVerticalSlice";
-import { courseColumns } from "../utils/colums/CourseColumns";
-import {
-  fetchCourseList,
-  resetCourseTableState,
-} from "../features/vertical/courseTableSlice";
-import {
-  selectCourseTableData,
-  selectCourseTableTotalCount,
-} from "../features/vertical/courseTableSelectors";
-import { getCourse } from "../features/vertical/getCourseSlice";
-import { selectgetCourseData } from "../features/vertical/getCourseSelectors";
+  resetModifyVerticalState,
+} from "../../features/vertical/modifyVerticalSlice";
+import { getDepartment } from "../../features/vertical/getDepartmentSlice";
+import { selectModifyVerticalLoading } from "../../features/vertical/modifyVerticalSelectors";
 
-export default function CoursePage() {
+export default function DepartmentPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -56,17 +57,17 @@ export default function CoursePage() {
 
   //selectors
   const dispatch = useDispatch();
-  const usersDblist = useSelector(selectCourseTableData);
-  const totalRows = useSelector(selectCourseTableTotalCount);
+  const usersDblist = useSelector(selectDepartmentTableData);
+  const totalRows = useSelector(selectDepartmentTableTotalCount);
   const searchLoading = useSelector(selectVerticalSearchLoading);
-  const loading = useSelector(selectUserLoading);
+  const loading = useSelector(selectModifyVerticalLoading);
   const verticals = useSelector(selectSearchVerticals);
   const token = getFromLocalStorage("authToken");
-  const courseData = useSelector(selectgetCourseData);
+  const verticalData = useSelector(selectgetDepartmentData);
   // dynamic filgter part
   const currentRole = "SuperAdmin";
   const currentPage = "DepartmentPage";
-  const verticalType = "Course";
+  const verticalType = "Department";
   // const requiredFilters =
   //   rolePageMapping[currentRole].pages.find((page) => page.page === currentPage)
   //     ?.requiredFilters || [];
@@ -127,7 +128,7 @@ export default function CoursePage() {
         offset: page * limit,
         limit,
       };
-      dispatch(fetchCourseList({ token, query, type: verticalType }));
+      dispatch(fetchDepartmentList({ token, query, type: verticalType }));
     },
     [dispatch, token, selectedStatus, verticalId, pageSize]
   );
@@ -149,7 +150,7 @@ export default function CoursePage() {
     setSelectedVertical(null);
     setSelectedStatus("");
     // Clear search results in Redux
-    dispatch(resetCourseTableState());
+    dispatch(resetDepartmentTableState());
     setmappedTeachers([]);
     // Reset pagination state and fetch the first page
     setPageNo(0); // Reset the current page to 0
@@ -193,7 +194,7 @@ export default function CoursePage() {
   );
 
   const handleEdit = (id) => {
-    dispatch(getCourse({ token, id, type: verticalType }));
+    dispatch(getDepartment({ token, id, type: verticalType }));
     setEditDrawerOpen(true);
   };
 
@@ -213,10 +214,10 @@ export default function CoursePage() {
       .unwrap()
       .then(() => {
         throttledFetchVerticals(pageNo, pageSize);
-        toast.success(`Successfully deleted course.`);
+        toast.success(`Successfully deleted Department.`);
       })
       .catch((error) => {
-        toast.error(`Failed to delete course. ${error.message}`);
+        toast.error(`Failed to delete Department. ${error.message}`);
       });
   };
 
@@ -225,11 +226,10 @@ export default function CoursePage() {
       .unwrap()
       .then(() => {
         throttledFetchVerticals(pageNo, pageSize);
-        toast.success(`Successfully Activated course.`);
+        toast.success(`Successfully Activated department.`);
       })
       .catch((error) => {
-        toast.error(`Failed to Activate 
-          course. ${error.message}`);
+        toast.error(`Failed to Activate Department. ${error.message}`);
       });
   };
 
@@ -244,8 +244,8 @@ export default function CoursePage() {
       }}
     >
       <TittleCard
-        tittle={"Manage Courses"}
-        button={"Add Course"}
+        tittle={"Manage Departments"}
+        button={"Add Department"}
         buttonAction={() => {
           setDrawerOpen(true);
         }}
@@ -271,12 +271,12 @@ export default function CoursePage() {
       <Box sx={{ flexGrow: 1, overflow: "auto" }}>
         {mappedTeachers.length === 0 ? (
           <Box sx={{ textAlign: "center", p: 2 }}>
-            <NoDataFound message="No Course record found" />
+            <NoDataFound message="No Department record found" />
           </Box>
         ) : (
           <VerticalTable
             rows={mappedTeachers}
-            columns={courseColumns(
+            columns={departmentColumns(
               handleEdit,
               openDeleteDialog,
               openActivateDialog,
@@ -292,7 +292,9 @@ export default function CoursePage() {
 
       <AddVerticalDrawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={() => {
+          setDrawerOpen(false), dispatch(resetModifyVerticalState());
+        }}
         type={verticalType}
         token={token}
         fetchVerticals={() => throttledFetchVerticals(pageNo, pageSize)}
@@ -300,8 +302,10 @@ export default function CoursePage() {
 
       <EditVerticalDrawer
         open={editDrawerOpen}
-        initialData={courseData}
-        onClose={() => setEditDrawerOpen(false)}
+        initialData={verticalData}
+        onClose={() => {
+          setEditDrawerOpen(false), dispatch(resetModifyVerticalState());
+        }}
         type={verticalType}
         token={token}
         fetchVerticals={() => throttledFetchVerticals(pageNo, pageSize)}
@@ -315,7 +319,7 @@ export default function CoursePage() {
         }}
         handleDelete={() => handleConfirmDelete(idToDelete)}
         msg={
-          "Are you sure you want to delete this Course? This action cannot be undone."
+          "Are you sure you want to delete this Department? This action cannot be undone."
         }
         btnValue={loading ? "Deleting..." : "Delete"}
         heading={"Confirm Delete"}
@@ -328,7 +332,7 @@ export default function CoursePage() {
           setIdToActivate(null), setIsActivateDialogOpen(false);
         }}
         handleDelete={() => handleConfirmActivate(idToActivate)}
-        msg={"Are you sure you want to make this Course Active ?. "}
+        msg={"Are you sure you want to make this Department Active ?. "}
         btnValue={loading ? "Activating..." : "Activate"}
         heading={"Confirm Activation"}
       />

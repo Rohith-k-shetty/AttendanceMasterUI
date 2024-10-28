@@ -15,6 +15,7 @@ import SubjectIcon from "@mui/icons-material/Subject";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 
 const menuItems = [
   {
@@ -77,14 +78,14 @@ const menuItems = [
     path: null, // No route for parent "Attendance Book"
     children: [
       {
-        text: "View",
-        icon: <AssignmentRoundedIcon />,
-        path: "/attendance-book/view",
+        text: "Add Attendance Books",
+        icon: <LibraryBooksIcon />,
+        path: "/attendance-book/add",
       },
       {
-        text: "Add",
-        icon: <AssignmentRoundedIcon />,
-        path: "/attendance-book/add",
+        text: "Manage Attendance Book",
+        icon: <MenuBookIcon />,
+        path: "/attendance-book/manage",
       },
     ],
   },

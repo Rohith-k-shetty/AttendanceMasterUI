@@ -1,14 +1,16 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 import HomePage from "../pages/HomePage";
-import SuperAdminPage from "../pages/SuperAdminPage";
-import AdminPage from "../pages/AdminPage";
-import TeacherPage from "../pages/TeacherPage";
-import StudentPage from "../pages/StudentPage";
+import AdminPage from "../pages/users/AdminPage";
+import TeacherPage from "../pages/users/TeacherPage";
+import StudentPage from "../pages/users/StudentPage";
+import SuperAdminPage from "../pages/users/SuperAdminPage";
 import TablePage from "../pages/TablePage";
+import DepartmentPage from "../pages/verticals/DepartmentPage";
+import CoursePage from "../pages/verticals/CoursePage";
+import SubjectPage from "../pages/verticals/SubjectPage";
+import AddAttendanceBookPage from "../pages/attendanceBook/AddAttendanceBookPage";
+import ManageAttendanceBookPage from "../pages/attendanceBook/ManageAttendanceBookPage";
 import SignIn from "../pages/sign-in/SignIn";
-import DepartmentPage from "../pages/DepartmentPage";
-import CoursePage from "../pages/CoursePage";
-import SubjectPage from "../pages/SubjectPage";
 
 const AppRoutes = ({ isAuthenticated }) => {
   return (
@@ -51,6 +53,28 @@ const AppRoutes = ({ isAuthenticated }) => {
         path="/subjects"
         element={isAuthenticated ? <SubjectPage /> : <Navigate to="/sign-in" />}
       />
+      <Route
+        path="/attendance-book/add"
+        element={
+          isAuthenticated ? (
+            <AddAttendanceBookPage />
+          ) : (
+            <Navigate to="/sign-in" />
+          )
+        }
+      />
+
+      <Route
+        path="/attendance-book/manage"
+        element={
+          isAuthenticated ? (
+            <ManageAttendanceBookPage />
+          ) : (
+            <Navigate to="/sign-in" />
+          )
+        }
+      />
+
       <Route path="/sign-in" element={<SignIn />} />
     </Routes>
   );

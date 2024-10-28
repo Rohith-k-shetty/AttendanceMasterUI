@@ -1,46 +1,46 @@
 import { Box } from "@mui/material";
-import { TittleCard } from "../components/TittleCard";
+import { TittleCard } from "../../components/TittleCard";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getFromLocalStorage } from "../utils/storage";
+import { getFromLocalStorage } from "../../utils/storage";
 import { useCallback } from "react";
-import { mapVerticalsToFields } from "../utils/functions";
-import NoDataFound from "../components/buttons/NoDataFound";
-import ConfirmationPopup from "../components/buttons/ConfirmationPopup";
+import { mapVerticalsToFields } from "../../utils/functions";
+import NoDataFound from "../../components/buttons/NoDataFound";
+import ConfirmationPopup from "../../components/buttons/ConfirmationPopup";
 import toast from "react-hot-toast";
-import { statusOptions } from "../utils/constants";
+import { statusOptions } from "../../utils/constants";
 import { debounce, throttle } from "lodash";
 import { useMemo } from "react";
-import AddVerticalDrawer from "../components/drawer/AddVerticalDrawer";
-import { VerticalFilter } from "../components/search/VerticalFilter";
+import AddVerticalDrawer from "../../components/drawer/AddVerticalDrawer";
+import { VerticalFilter } from "../../components/search/VerticalFilter";
 import {
   clearVerticalSearch,
   searchVerticals,
-} from "../features/search/verticalSearchSlice";
+} from "../../features/search/verticalSearchSlice";
 import {
   selectSearchVerticals,
   selectVerticalSearchLoading,
-} from "../features/search/verticalSearchSelector";
-import VerticalTable from "../components/tables/VerticalTable";
-import EditVerticalDrawer from "../components/drawer/EditVerticalDrawer";
+} from "../../features/search/verticalSearchSelector";
+import VerticalTable from "../../components/tables/VerticalTable";
+import EditVerticalDrawer from "../../components/drawer/EditVerticalDrawer";
 import {
   activateVertical,
   deleteVertical,
-} from "../features/vertical/modifyVerticalSlice";
-import { selectModifyVerticalLoading } from "../features/vertical/modifyVerticalSelectors";
+} from "../../features/vertical/modifyVerticalSlice";
+import { selectModifyVerticalLoading } from "../../features/vertical/modifyVerticalSelectors";
 import {
   fetchSubjectList,
   resetSubjectTableState,
-} from "../features/vertical/subjectTableSlice";
+} from "../../features/vertical/subjectTableSlice";
 import {
   selectSubjectTableData,
   selectSubjectTableTotalCount,
-} from "../features/vertical/subjectTableSelectors";
-import { selectgetSubjectData } from "../features/vertical/getSubjectSelectors";
-import { subjectColumns } from "../utils/colums/SubjectColums";
-import { getSubject } from "../features/vertical/getSubjectSlice";
+} from "../../features/vertical/subjectTableSelectors";
+import { selectgetSubjectData } from "../../features/vertical/getSubjectSelectors";
+import { subjectColumns } from "../../utils/colums/SubjectColums";
+import { getSubject } from "../../features/vertical/getSubjectSlice";
 
-export default function DepartmentPage() {
+export default function SubjectPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("");

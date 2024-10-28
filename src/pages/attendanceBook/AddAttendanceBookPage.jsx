@@ -1,56 +1,57 @@
 import { Box } from "@mui/material";
-import { TittleCard } from "../components/TittleCard";
+import { TittleCard } from "../../components/TittleCard";
 import { useEffect, useState } from "react";
-import { DynamicFilter } from "../components/search/DynamicFilter";
-import rolePageMapping from "../utils/rolePageMapping";
+import { DynamicFilter } from "../../components/search/DynamicFilter";
+import rolePageMapping from "../../utils/rolePageMapping";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectCourses,
   selectDepartments,
   selectYears,
-} from "../features/vertical/verticalSelectors";
-import { getFromLocalStorage } from "../utils/storage";
+} from "../../features/vertical/verticalSelectors";
+import { getFromLocalStorage } from "../../utils/storage";
 import {
   getCourses,
   getDepartments,
   getYears,
-} from "../features/vertical/verticalSlice";
+} from "../../features/vertical/verticalSlice";
 import {
   selectSearchLoading,
   selectSearchUsers,
-} from "../features/search/searchSelectors";
+} from "../../features/search/searchSelectors";
 import { useCallback } from "react";
-import { clearSearch, searchUsers } from "../features/search/searchSlice";
+import { clearSearch, searchUsers } from "../../features/search/searchSlice";
 import {
   fetchUserList,
   resetUserTableState,
-} from "../features/users/userTableSlice";
+} from "../../features/users/userTableSlice";
 import {
   selectUserTableData,
   selectUserTableTotalCount,
-} from "../features/users/userTableSelector";
-import { mapSuperAdminToFields } from "../utils/functions";
-import UserTable from "../components/tables/UserTable";
-import NoDataFound from "../components/buttons/NoDataFound";
-import UserAddDrawer from "../components/drawer/UserAddDrawer";
-import UserEditDrawer from "../components/drawer/UserEditDrawer";
-import { getUser } from "../features/users/getUserSlice";
-import { selectgetUserData } from "../features/users/getUserSelector";
-import ConfirmationPopup from "../components/buttons/ConfirmationPopup";
+} from "../../features/users/userTableSelector";
+import { mapSuperAdminToFields } from "../../utils/functions";
+import UserTable from "../../components/tables/UserTable";
+import NoDataFound from "../../components/buttons/NoDataFound";
+import UserAddDrawer from "../../components/drawer/UserAddDrawer";
+import UserEditDrawer from "../../components/drawer/UserEditDrawer";
+import { getUser } from "../../features/users/getUserSlice";
+import { selectgetUserData } from "../../features/users/getUserSelector";
+import ConfirmationPopup from "../../components/buttons/ConfirmationPopup";
 import {
   activateUser,
   deleteUser,
   resetUser,
-} from "../features/users/userSlice";
+} from "../../features/users/userSlice";
 import toast from "react-hot-toast";
-import { selectUserLoading } from "../features/users/userSelectors";
-import InfoPopup from "../components/buttons/InfoPopup";
-import { statusOptions } from "../utils/constants";
+import { selectUserLoading } from "../../features/users/userSelectors";
+import InfoPopup from "../../components/buttons/InfoPopup";
+import { statusOptions } from "../../utils/constants";
 import { debounce, throttle } from "lodash";
 import { useMemo } from "react";
-import { superAdminColumns } from "../utils/colums/SuperAdminColumns";
+import { superAdminColumns } from "../../utils/colums/SuperAdminColumns";
+import { AttendanceBookFilter } from "../../components/search/AttendanceBookFilter";
 
-export default function AdminPage() {
+export default function AddAttendanceBookPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState("");
@@ -95,6 +96,7 @@ export default function AdminPage() {
     dispatch(getDepartments(token));
     dispatch(getCourses(token));
     dispatch(getYears(token));
+    dispatch(resetUserTableState());
   }, [dispatch]);
 
   const handleInputChange = useCallback(
@@ -313,7 +315,7 @@ export default function AdminPage() {
       />
 
       {/* Dynamic Filter Section */}
-      <DynamicFilter
+      <AttendanceBookFilter
         departments={departments}
         years={years}
         courses={courses}
@@ -332,6 +334,7 @@ export default function AdminPage() {
         requiredFilters={requiredFilters}
         handleInputChange={handleInputChange}
         loading={searchLoading}
+        role={"SuperAdmin"}
       />
 
       {/* Data Table Section */}

@@ -1,57 +1,56 @@
 import { Box } from "@mui/material";
-import { TittleCard } from "../components/TittleCard";
+import { TittleCard } from "../../components/TittleCard";
 import { useEffect, useState } from "react";
-import { DynamicFilter } from "../components/search/DynamicFilter";
-import rolePageMapping from "../utils/rolePageMapping";
+import { DynamicFilter } from "../../components/search/DynamicFilter";
+import rolePageMapping from "../../utils/rolePageMapping";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectCourses,
   selectDepartments,
   selectYears,
-} from "../features/vertical/verticalSelectors";
-import { getFromLocalStorage } from "../utils/storage";
+} from "../../features/vertical/verticalSelectors";
+import { getFromLocalStorage } from "../../utils/storage";
 import {
   getCourses,
   getDepartments,
   getYears,
-} from "../features/vertical/verticalSlice";
+} from "../../features/vertical/verticalSlice";
 import {
   selectSearchLoading,
   selectSearchUsers,
-} from "../features/search/searchSelectors";
+} from "../../features/search/searchSelectors";
 import { useCallback } from "react";
-import { clearSearch, searchUsers } from "../features/search/searchSlice";
+import { clearSearch, searchUsers } from "../../features/search/searchSlice";
 import {
   fetchUserList,
   resetUserTableState,
-} from "../features/users/userTableSlice";
+} from "../../features/users/userTableSlice";
 import {
   selectUserTableData,
   selectUserTableTotalCount,
-} from "../features/users/userTableSelector";
-import { mapAdminsToFields, mapTeachersToFields } from "../utils/functions";
-import UserTable from "../components/tables/UserTable";
-import NoDataFound from "../components/buttons/NoDataFound";
-import UserAddDrawer from "../components/drawer/UserAddDrawer";
-import UserEditDrawer from "../components/drawer/UserEditDrawer";
-import { getUser } from "../features/users/getUserSlice";
-import { selectgetUserData } from "../features/users/getUserSelector";
-import { TeacherColumns } from "../utils/colums/TeacherColums";
-import ConfirmationPopup from "../components/buttons/ConfirmationPopup";
+} from "../../features/users/userTableSelector";
+import { mapStudentsToFields } from "../../utils/functions";
+import UserTable from "../../components/tables/UserTable";
+import NoDataFound from "../../components/buttons/NoDataFound";
+import UserAddDrawer from "../../components/drawer/UserAddDrawer";
+import UserEditDrawer from "../../components/drawer/UserEditDrawer";
+import { getUser } from "../../features/users/getUserSlice";
+import { selectgetUserData } from "../../features/users/getUserSelector";
+import ConfirmationPopup from "../../components/buttons/ConfirmationPopup";
 import {
   activateUser,
   deleteUser,
   resetUser,
-} from "../features/users/userSlice";
+} from "../../features/users/userSlice";
 import toast from "react-hot-toast";
-import { selectUserLoading } from "../features/users/userSelectors";
-import InfoPopup from "../components/buttons/InfoPopup";
-import { statusOptions } from "../utils/constants";
+import { selectUserLoading } from "../../features/users/userSelectors";
+import InfoPopup from "../../components/buttons/InfoPopup";
+import { statusOptions } from "../../utils/constants";
 import { debounce, throttle } from "lodash";
 import { useMemo } from "react";
-import { adminColumns } from "../utils/colums/AdminColums";
+import { studentColumns } from "../../utils/colums/studentColums";
 
-export default function AdminPage() {
+export default function StudentPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState("");
@@ -60,7 +59,7 @@ export default function AdminPage() {
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [userId, setUserId] = useState("");
-  const [mappedTeachers, setmappedTeachers] = useState([]);
+  const [mappedUsers, setMappedUsers] = useState([]);
   const [pageNo, setPageNo] = useState(0); // Current page
   const [pageSize, setPageSize] = useState(10); // Page size
   const [idToDelete, setIdToDelete] = useState(null);
@@ -86,7 +85,7 @@ export default function AdminPage() {
 
   // dynamic filgter part
   const currentRole = "SuperAdmin";
-  const currentPage = "AdminPage";
+  const currentPage = "StudentPage";
   const requiredFilters =
     rolePageMapping[currentRole].pages.find((page) => page.page === currentPage)
       ?.requiredFilters || [];
@@ -95,6 +94,7 @@ export default function AdminPage() {
     dispatch(getDepartments(token));
     dispatch(getCourses(token));
     dispatch(getYears(token));
+    dispatch(resetUserTableState());
   }, [dispatch]);
 
   const handleInputChange = useCallback(
@@ -103,7 +103,7 @@ export default function AdminPage() {
         dispatch(
           searchUsers({
             token,
-            query: { searchTerm: newInputValue, role: "Admin" },
+            query: { searchTerm: newInputValue, role: "Student" },
           })
         );
       } else {
@@ -118,6 +118,10 @@ export default function AdminPage() {
   const handleChange = useCallback((event) => {
     const { name, value } = event.target;
     switch (name) {
+      case "department":
+        setSelectedDepartment(value);
+        setPageNo(0);
+        break;
       case "course":
         setselectedCourse(value);
         setPageNo(0);
@@ -152,7 +156,7 @@ export default function AdminPage() {
         status: selectedStatus || "",
         yearId: selectedYear || "",
         userId: userId || "",
-        role: "Admin",
+        role: "Student",
         offset: page * limit,
         limit,
       };
@@ -192,7 +196,7 @@ export default function AdminPage() {
     // Clear search results in Redux
     dispatch(clearSearch());
     dispatch(resetUserTableState());
-    setmappedTeachers([]);
+    setMappedUsers([]);
     // Reset pagination state and fetch the first page
     setPageNo(0); // Reset the current page to 0
     setPageSize(10); // Reset to the default page size
@@ -201,7 +205,7 @@ export default function AdminPage() {
 
   // Updated handleSearch to fetch users after resetting to the first page
   const handleSearch = useCallback(() => {
-    setmappedTeachers([]);
+    setMappedUsers([]);
     setPageNo(0); // Reset to the first page
     throttledFetchUsers(pageNo, pageSize); // Fetch users after search
   }, [throttledFetchUsers, pageNo, pageSize]);
@@ -209,7 +213,7 @@ export default function AdminPage() {
   // Memoize the result of mapStudentsToFields
   const memoizedUsers = useMemo(() => {
     if (usersDblist && usersDblist.length > 0) {
-      return mapAdminsToFields(usersDblist);
+      return mapStudentsToFields(usersDblist);
     } else {
       return [];
     }
@@ -217,7 +221,7 @@ export default function AdminPage() {
 
   // Update the state when memoizedUsers changes
   useEffect(() => {
-    setmappedTeachers(memoizedUsers);
+    setMappedUsers(memoizedUsers);
   }, [memoizedUsers]);
 
   // Updated onPaginationChange to use throttledFetchUsers
@@ -306,8 +310,8 @@ export default function AdminPage() {
       }}
     >
       <TittleCard
-        tittle={"Manage Admin"}
-        button={"Add Admin"}
+        tittle={"Manage Students"}
+        button={"Add Student"}
         buttonAction={() => {
           setDrawerOpen(true);
         }}
@@ -337,14 +341,14 @@ export default function AdminPage() {
 
       {/* Data Table Section */}
       <Box sx={{ flexGrow: 1, overflow: "auto" }}>
-        {mappedTeachers.length === 0 ? (
+        {mappedUsers.length === 0 ? (
           <Box sx={{ textAlign: "center", p: 2 }}>
-            <NoDataFound message="No admin record found" />
+            <NoDataFound message="No student record found" />
           </Box>
         ) : (
           <UserTable
-            rows={mappedTeachers}
-            columns={adminColumns(
+            rows={mappedUsers}
+            columns={studentColumns(
               handleEdit,
               openDeleteDialog,
               openResetDialog,
@@ -352,8 +356,8 @@ export default function AdminPage() {
               openInfoDialog,
               currentRole
             )}
-            totalRows={totalRows}
-            pageSize={pageSize}
+            totalRows={totalRows} // Total number of records for pagination
+            pageSize={pageSize} // Current page size
             currentPage={pageNo} // Current page number
             onPaginationChange={onPaginationChange}
           />
@@ -364,7 +368,7 @@ export default function AdminPage() {
       <UserAddDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        role={"Admin"}
+        role={"Student"}
         departments={departments}
         years={years}
         courses={courses}
@@ -376,7 +380,7 @@ export default function AdminPage() {
       <UserEditDrawer
         open={editDrawerOpen}
         onClose={() => setEditDrawerOpen(false)}
-        role={"Admin"}
+        role={"Student"}
         departments={departments}
         years={years}
         courses={courses}
@@ -393,7 +397,7 @@ export default function AdminPage() {
         }}
         handleDelete={() => handleConfirmDelete(idToDelete)}
         msg={
-          "Are you sure you want to delete this Admin? This action cannot be undone."
+          "Are you sure you want to delete this student? This action cannot be undone."
         }
         btnValue={loading ? "Deleting..." : "Delete"}
         heading={"Confirm Delete"}
@@ -418,7 +422,7 @@ export default function AdminPage() {
           setIdToActivate(null), setIsActivateDialogOpen(false);
         }}
         handleDelete={() => handleConfirmActivate(idToActivate)}
-        msg={"Are you sure you want to make this Admin Active ?. "}
+        msg={"Are you sure you want to make this Student Active ?. "}
         btnValue={loading ? "Activating..." : "Activate"}
         heading={"Confirm Activation"}
       />
@@ -429,7 +433,7 @@ export default function AdminPage() {
         handleClose={() => {
           setIsInfoDialogOpen(false);
         }}
-        msg={"Please Contact Super Admin to Activate this Admin ... "}
+        msg={"Please Contact Super Admin to Activate this Student ... "}
         heading={"Contact Information"}
       />
     </Box>
